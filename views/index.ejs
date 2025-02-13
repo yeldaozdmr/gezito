@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gezito</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Slider için Swiper.js -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+</head>
+<body class="bg-white">
+    <%- include('partials/header') %>
+
+    <!-- Hero Section -->
+    <section class="relative h-[450px] overflow-hidden">
+        <!-- Swiper -->
+        <div class="swiper heroSwiper h-full">
+            <div class="swiper-wrapper">
+                <div class="swiper-slide relative">
+                    <img src='https://picsum.photos/id/1043/1600/900' alt="Türkiye Gezilecek Yerler" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-black bg-opacity-30"></div>
+                    <div class="absolute inset-0 flex items-center justify-center text-white text-center z-10">
+                        <div class="slide-content">
+                            <h2 class="text-3xl font-bold mb-2">Doğal Güzellikler</h2>
+                            <p class="text-lg">Türkiye'nin eşsiz doğal güzellikleri</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Slide 2 -->
+                <div class="swiper-slide relative">
+                    <img src='https://picsum.photos/id/1045/1600/900' alt="Tarihi Mekanlar" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-black bg-opacity-30"></div>
+                    <div class="absolute inset-0 flex items-center justify-center text-white text-center">
+                        <div>
+                            <h2 class="text-3xl font-bold mb-2">Tarihi Mekanlar</h2>
+                            <p class="text-lg">Binlerce yıllık tarih</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Slide 3 -->
+                <div class="swiper-slide relative">
+                    <img src='https://picsum.photos/id/1047/1600/900' alt="Kültürel Yerler" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-black bg-opacity-30"></div>
+                    <div class="absolute inset-0 flex items-center justify-center text-white text-center">
+                        <div>
+                            <h2 class="text-3xl font-bold mb-2">Kültürel Zenginlik</h2>
+                            <p class="text-lg">Anadolu'nun zengin kültürü</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Slide 4 -->
+                <div class="swiper-slide relative">
+                    <img src='https://picsum.photos/id/1049/1600/900' alt="Turistik Yerler" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-black bg-opacity-30"></div>
+                    <div class="absolute inset-0 flex items-center justify-center text-white text-center">
+                        <div>
+                            <h2 class="text-3xl font-bold mb-2">Turistik Bölgeler</h2>
+                            <p class="text-lg">En popüler turistik mekanlar</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Slide 5 -->
+                <div class="swiper-slide relative">
+                    <img src='https://picsum.photos/id/1051/1600/900' alt="Plajlar" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-black bg-opacity-30"></div>
+                    <div class="absolute inset-0 flex items-center justify-center text-white text-center">
+                        <div>
+                            <h2 class="text-3xl font-bold mb-2">Muhteşem Plajlar</h2>
+                            <p class="text-lg">Turkuaz sahiller ve altın kumlar</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Navigasyon düğmeleri -->
+            <div class="swiper-button-next !text-white !opacity-70 hover:!opacity-100"></div>
+            <div class="swiper-button-prev !text-white !opacity-70 hover:!opacity-100"></div>
+            
+            <!-- Pagination noktaları -->
+            <div class="swiper-pagination"></div>
+        </div>
+    </section>
+
+    <!-- Popüler Şehirler -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-gray-900 mb-8">Popüler Şehirler</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <% cities.forEach(city => { %>
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                        <img src="<%= city.imageUrl %>" alt="<%= city.name %>" class="w-full h-48 object-cover">
+                        <div class="p-4">
+                            <h3 class="text-xl font-semibold text-gray-900"><%= city.name %></h3>
+                            <p class="text-gray-600 mt-2 line-clamp-2"><%= city.description %></p>
+                            <a href="/sehir/<%= city.slug %>" class="inline-block mt-4 text-blue-600 hover:text-blue-700">Detayları Gör →</a>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+        </div>
+    </section>
+
+    <!-- Popüler Ülkeler -->
+    <section class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-gray-900 mb-8">Popüler Ülkeler</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <% countries.forEach(country => { %>
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                        <img src="<%= country.flagUrl %>" alt="<%= country.name %>" class="w-full h-48 object-cover">
+                        <div class="p-4">
+                            <h3 class="text-xl font-semibold text-gray-900"><%= country.name %></h3>
+                            <p class="text-gray-600 mt-2 line-clamp-2"><%= country.description %></p>
+                            <a href="/ulke/<%= country.slug %>" class="inline-block mt-4 text-blue-600 hover:text-blue-700">Detayları Gör →</a>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <%- include('partials/footer') %>
+
+    <script>
+        // Slider inicializasyonu
+        const swiper = new Swiper('.heroSwiper', {
+            loop: true,
+            effect: 'fade',
+            fadeEffect: {
+                crossFade: true
+            },
+            autoplay: {
+                delay: 5000,
+                disableOnInteraction: false,
+            },
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: true,
+            },
+            navigation: {
+                nextEl: '.swiper-button-next',
+                prevEl: '.swiper-button-prev',
+            },
+        });
+    </script>
+
+    <style>
+        .swiper-slide-active .slide-content {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .swiper-slide-inactive .slide-content {
+            opacity: 0;
+        }
+    </style>
+
+    <!-- Arama script'i -->
+    <script>
+    const searchInput = document.getElementById('searchInput');
+    const searchResults = document.getElementById('searchResults');
+    const searchForm = document.getElementById('searchForm');
+
+    // Arama sonuçlarını göster
+    function showResults(results) {
+        if (results.length > 0) {
+            const resultsHtml = results.map(result => `
+                <a href="/sehir/${result._id}" class="block px-4 py-3 hover:bg-gray-50 transition-colors">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <img src="${result.imageUrl || '/images/placeholder.jpg'}" 
+                                 alt="${result.name}" 
+                                 class="w-12 h-12 rounded-lg object-cover">
+                        </div>
+                        <div class="ml-3">
+                            <div class="font-medium text-gray-900">${result.name}</div>
+                            <div class="text-sm text-gray-500 line-clamp-1">${result.description || ''}</div>
+                        </div>
+                    </div>
+                </a>
+            `).join('');
+
+            searchResults.innerHTML = resultsHtml;
+            searchResults.classList.remove('hidden');
+        } else {
+            searchResults.innerHTML = `
+                <div class="px-4 py-3 text-sm text-gray-500">
+                    Sonuç bulunamadı
+                </div>
+            `;
+            searchResults.classList.remove('hidden');
+        }
+    }
+
+    // Debounce fonksiyonu
+    function debounce(func, wait) {
+        let timeout;
+        return function(...args) {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => func.apply(this, args), wait);
+        };
+    }
+
+    // Arama işlemi
+    const performSearch = debounce(async (searchTerm) => {
+        if (searchTerm.length < 2) {
+            searchResults.classList.add('hidden');
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/search?q=${encodeURIComponent(searchTerm)}`);
+            if (!response.ok) throw new Error('Arama hatası');
+            
+            const data = await response.json();
+            showResults(data);
+        } catch (error) {
+            console.error('Arama hatası:', error);
+            searchResults.innerHTML = `
+                <div class="px-4 py-3 text-sm text-red-500">
+                    Arama sırasında bir hata oluştu
+                </div>
+            `;
+            searchResults.classList.remove('hidden');
+        }
+    }, 300);
+
+    // Input event listener
+    searchInput.addEventListener('input', (e) => {
+        const searchTerm = e.target.value.trim();
+        performSearch(searchTerm);
+    });
+
+    // Form submit
+    searchForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const searchTerm = searchInput.value.trim();
+        if (searchTerm) {
+            window.location.href = `/search?q=${encodeURIComponent(searchTerm)}`;
+        }
+    });
+
+    // Dışarı tıklandığında sonuçları gizle
+    document.addEventListener('click', (e) => {
+        if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+            searchResults.classList.add('hidden');
+        }
+    });
+
+    // ESC tuşuna basıldığında sonuçları gizle
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            searchResults.classList.add('hidden');
+        }
+    });
+    </script>
+</body>
+</html> 

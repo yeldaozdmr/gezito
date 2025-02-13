@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= city.name %> - Şehir Detayları</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+</head>
+<body class="bg-gray-100">
+    <%- include('partials/header') %>
+
+    <div class="container mx-auto px-4 py-8">
+        <img src="<%= city.imageUrl %>" alt="<%= city.name %>" class="w-full h-64 object-cover rounded-lg mb-4 shadow-md">
+        <h1 class="text-4xl font-bold mb-4"><%= city.name %></h1>
+       
+        <p class="mb-4"><%= city.description %></p>
+
+          <!-- Meşhur Yemekler Bölümü -->
+          <h2 class="text-2xl font-semibold mb-2 mt-8">Meşhur Yemekler</h2>
+          <div class="bg-white rounded-lg shadow-md p-4">
+              <p>Bu şehirdeki meşhur yemekleri görmek için tıklayın.</p>
+              <a href="/sehir/<%= city.slug %>/yemekler" class="text-blue-500 hover:underline">Meşhur Yemekler</a>
+          </div>
+          <br>
+
+        <h2 class="text-2xl font-semibold mb-2">Gezilecek Yerler</h2>
+        <div class="space-y-4">
+            <% city.attractions.forEach((attraction, index) => { %>
+                <div class="bg-white rounded-lg shadow-md p-4">
+                    <h3 class="text-xl font-semibold"><%= index + 1 %>. <%= attraction.name %></h3>
+                    <img src="<%= attraction.imageUrl %>" alt="<%= attraction.name %>" class="w-full h-48 object-cover rounded-lg mb-2">
+                    <p class="text-gray-600"><%= attraction.description %></p>
+                    <p><strong>Ziyaret Süresi:</strong> <%= attraction.visitDuration %></p>
+                    <p><strong>Fiyat:</strong> <%= attraction.price %></p>
+                    <p><strong>Açılış Saatleri:</strong> <%= attraction.openingHours %></p>
+                </div>
+            <% }); %>
+        </div>
+
+      
+    </div>
+
+    <%- include('partials/footer') %>
+</body>
+</html>

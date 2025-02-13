@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bölge Ara - Gezito</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-white">
+    <%- include('partials/header') %>
+
+    <main class="container mx-auto px-4 py-8">
+        <div class="max-w-4xl mx-auto">
+            <div class="mb-8">
+                <h1 class="text-3xl font-bold text-gray-900 mb-4">
+                    <% if (type === 'continent') { %>
+                        Kıta Ara
+                    <% } else if (type === 'country') { %>
+                        Ülke Ara
+                    <% } else { %>
+                        Şehir Ara
+                    <% } %>
+                </h1>
+                
+                <!-- Arama Kutusu -->
+                <div class="relative">
+                    <input 
+                        type="text" 
+                        id="searchInput"
+                        class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-blue-500"
+                        placeholder="Aramaya başlayın..."
+                    >
+                    <div id="searchResults" class="absolute w-full mt-2 bg-white shadow-lg rounded-lg hidden">
+                        <!-- Sonuçlar JavaScript ile buraya eklenecek -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Popüler Öneriler -->
+            <div>
+                <h2 class="text-xl font-semibold text-gray-900 mb-4">Popüler <%= type === 'continent' ? 'Kıtalar' : type === 'country' ? 'Ülkeler' : 'Şehirler' %></h2>
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-4" id="popularItems">
+                    <!-- Popüler öğeler JavaScript ile buraya eklenecek -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <%- include('partials/footer') %>
+
+    <script>
+        const searchInput = document.getElementById('searchInput');
+        const searchResults = document.getElementById('searchResults');
+        const popularItems = document.getElementById('popularItems');
+
+        // Arama fonksiyonu
+        searchInput.addEventListener('input', async (e) => {
+            const searchTerm = e.target.value.trim();
+            
+            if (searchTerm.length < 2) {
+                searchResults.classList.add('hidden');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/search?type=<%= type %>&q=${searchTerm}`);
+                const data = await response.json();
+
+                if (data.length > 0) {
+                    searchResults.innerHTML = data.map(item => `
+                        <a href="/detail/${item.type}/${item._id}" 
+                           class="block px-4 py-2 hover:bg-gray-100">
+                            ${item.name}
+                        </a>
+                    `).join('');
+                    searchResults.classList.remove('hidden');
+                } else {
+                    searchResults.innerHTML = `
+                        <div class="px-4 py-2 text-gray-500">
+                            Sonuç bulunamadı
+                        </div>
+                    `;
+                    searchResults.classList.remove('hidden');
+                }
+            } catch (error) {
+                console.error('Arama hatası:', error);
+            }
+        });
+
+        // Sayfa yüklendiğinde popüler öğeleri getir
+        window.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const response = await fetch(`/api/popular?type=<%= type %>`);
+                const data = await response.json();
+
+                popularItems.innerHTML = data.map(item => `
+                    <a href="/detail/${item.type}/${item._id}" 
+                       class="block p-4 bg-gray-50 rounded-lg hover:bg-gray-100">
+                        <h3 class="font-semibold text-gray-900">${item.name}</h3>
+                        <p class="text-sm text-gray-600 mt-1">${item.description || ''}</p>
+                    </a>
+                `).join('');
+            } catch (error) {
+                console.error('Popüler öğeler yüklenirken hata:', error);
+            }
+        });
+
+        // Dışarı tıklandığında sonuçları gizle
+        document.addEventListener('click', (e) => {
+            if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+                searchResults.classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html> 
