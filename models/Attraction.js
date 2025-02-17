@@ -23,12 +23,28 @@ const attractionSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+
     visitDuration: String,
+
     price: {
         type: String,
         default: 'Ücretsiz'
     },
+
     openingHours: String,
+    
+    location: {
+        type: {
+            type: String,
+            enum: ['Point'],
+            required: true
+        },
+        coordinates: {
+            type: [Number],
+            required: true
+        }
+    },
+
     category: {
         type: String,
         enum: ['tarihi', 'müze', 'park', 'dini', 'alışveriş', 'eğlence']
@@ -39,6 +55,8 @@ const attractionSchema = new mongoose.Schema({
         required: true
     }
 });
+
+attractionSchema.index({ location: '2dsphere' });
 
 attractionSchema.pre('save', function(next) {
     if (!this.slug || this.isModified('name')) {

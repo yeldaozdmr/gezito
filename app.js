@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const path = require('path');
+const Attraction = require('./models/Attraction');
 
 // Route dosyalarını import et
 const indexRoutes = require('./routes/index');
@@ -19,6 +20,7 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json());
 
 // MongoDB bağlantısı
 mongoose.connect(MONGODB_URI, {
@@ -65,6 +67,16 @@ app.use(session({
 // Routes
 app.use('/', indexRoutes);
 app.use('/auth', authRoutes);
+
+// Endpoint tanımla
+app.get("/api/attractions", async (req, res) => {
+    try {
+        const attractions = await Attraction.find().populate('city'); // Şehir bilgilerini de çekmek için populate kullanabilirsiniz
+        res.json(attractions);
+    } catch (err) {
+        res.status(500).json({ message: "Veri alınamadı", error: err });
+    }
+});
 
 // Error handling middleware
 app.use((err, req, res, next) => {
