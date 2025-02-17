@@ -61,11 +61,14 @@
             </nav>
 
             <nav class="navbar navbar-light bg-light">
-                <form class="form-inline">
-                  <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-                  <button class="btn btn-outline-success my-2 my-sm-0" type="submit" style="color: green;">Ara</button>
+                <form id="searchForm" class="form-inline">
+                    <input id="searchInput" class="form-control mr-sm-2" type="search" placeholder="Ara..." aria-label="Search">
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit" style="color: green;">Ara</button>
                 </form>
-              </nav>
+                <div id="searchResults" class="hidden"> <!-- Arama sonuçları burada gösterilecek -->
+                    <!-- Arama sonuçlarını buraya ekleyin -->
+                </div>
+            </nav>
             <!-- Sağ Taraf: Giriş -->
             <div class="w-48 flex justify-end">
                 <a href="/giris" class="flex items-center space-x-2 text-gray-600 hover:text-yellow-600 p-2 group">
@@ -85,7 +88,11 @@ let isDropdownOpen = false;
 function toggleDropdown(event) {
     event.stopPropagation();
     const dropdown = document.getElementById('regionDropdown');
-    const button = document.getElementById('regionButton');
+    // Örnek JavaScript kodu
+    const button = document.getElementById('myButton');
+    button.addEventListener('click', function() {
+        // Butona tıklandığında yapılacak işlemler
+    });
     
     if (!isDropdownOpen) {
         dropdown.classList.remove('hidden');
@@ -112,6 +119,37 @@ document.querySelectorAll('#regionDropdown a').forEach(link => {
     link.addEventListener('click', (event) => {
         event.stopPropagation();
     });
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('searchInput');
+    const searchResults = document.getElementById('searchResults');
+    const searchForm = document.getElementById('searchForm');
+
+    if (searchInput && searchResults && searchForm) {
+        searchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.trim();
+            performSearch(searchTerm);
+        });
+
+        // Form submit
+        searchForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const searchTerm = searchInput.value.trim();
+            if (searchTerm) {
+                window.location.href = `/search?q=${encodeURIComponent(searchTerm)}`;
+            }
+        });
+
+        // Dışarı tıklandığında sonuçları gizle
+        document.addEventListener('click', (e) => {
+            if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+                searchResults.classList.add('hidden');
+            }
+        });
+    } else {
+        console.error('searchInput, searchResults veya searchForm öğesi bulunamadı.');
+    }
 });
 </script>
 
