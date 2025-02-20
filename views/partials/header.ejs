@@ -1,10 +1,22 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gezito</title>
+    <link rel="icon" href="/images/favicon.ico" type="image/x-icon">
+    <!-- CSS bağlantısını kaldırdık -->
+    <!-- <link rel="stylesheet" href="styles.css"> -->
+</head>
+<body>
+
 <header class="bg-white shadow-sm">
     <div class="container mx-auto px-4">
         <div class="flex items-center justify-between h-16">
             <!-- Logo -->
             <a href="/" class="flex items-center -my-6">
                 <img 
-                    src="./images/logo.png"
+                    src="/images/logo.png"
                     alt="Gezito Logo" 
                     class="h-20 w-auto"
                 />
@@ -12,7 +24,6 @@
 
             <!-- Navigation -->
             <nav class="hidden md:flex space-x-8">
-                <!-- Rehberler Dropdown -->
                 <div class="relative">
                     <button 
                         id="regionButton"
@@ -25,51 +36,26 @@
                         </svg>
                     </button>
                     <div id="regionDropdown" class="hidden absolute w-48 bg-white shadow-sm rounded-md mt-1 py-1 z-50 left-0 border border-gray-100">
-                        <a href="/browse/country" class="block px-4 py-2 text-gray-600 hover:bg-gray-50 text-sm tracking-wide">
-                            Ülkeler
-                        </a>
-                        <a href="/browse/city" class="block px-4 py-2 text-gray-600 hover:bg-gray-50 text-sm tracking-wide">
-                            Şehirler
-                        </a>
+                        <a href="/browse/country" class="block px-4 py-2 text-gray-600 hover:bg-gray-50 text-sm tracking-wide">Ülkeler</a>
+                        <a href="/browse/city" class="block px-4 py-2 text-gray-600 hover:bg-gray-50 text-sm tracking-wide">Şehirler</a>
                     </div>
                 </div>
 
-                <a 
-                    href="https://tr.hotels.com" 
-                    target="_blank" 
-                    rel="noopener noreferrer" 
-                    class="text-gray-600 hover:text-yellow-600 font-light text-base tracking-wider uppercase"
-                >
-                    Otel
-                </a>
-                <a 
-                    href="https://www.enuygun.com/ucak-bileti/" 
-                    target="_blank" 
-                    rel="noopener noreferrer" 
-                    class="text-gray-600 hover:text-yellow-600 font-light text-base tracking-wider uppercase"
-                >
-                    Uçak
-                </a>
-                <a 
-                    href="https://www.enuygun.com/arac-kiralama/" 
-                    target="_blank" 
-                    rel="noopener noreferrer" 
-                    class="text-gray-600 hover:text-yellow-600 font-light text-base tracking-wider uppercase whitespace-nowrap"
-                >
-                    Araç Kiralama
-                </a>
+                <a href="https://tr.hotels.com" target="_blank" class="text-gray-600 hover:text-yellow-600 font-light text-base tracking-wider uppercase">Otel</a>
+                <a href="https://www.enuygun.com/ucak-bileti/" target="_blank" class="text-gray-600 hover:text-yellow-600 font-light text-base tracking-wider uppercase">Uçak</a>
+                <a href="https://www.enuygun.com/arac-kiralama/" target="_blank" class="text-gray-600 hover:text-yellow-600 font-light text-base tracking-wider uppercase whitespace-nowrap">Araç Kiralama</a>
             </nav>
 
+            <!-- Arama Çubuğu -->
             <nav class="navbar navbar-light bg-light">
                 <form id="searchForm" class="form-inline">
-                    <input id="searchInput" class="form-control mr-sm-2" type="search" placeholder="Ara..." aria-label="Search">
+                    <input id="searchInput" class="form-control mr-sm-2 border border-black rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-yellow-500 w-64" type="search" placeholder="Ara..." aria-label="Search">
                     <button class="btn btn-outline-success my-2 my-sm-0" type="submit" style="color: green;">Ara</button>
                 </form>
-                <div id="searchResults" class="hidden"> <!-- Arama sonuçları burada gösterilecek -->
-                    <!-- Arama sonuçlarını buraya ekleyin -->
-                </div>
+                <div id="searchResults" class="hidden"></div>
             </nav>
-            <!-- Sağ Taraf: Giriş -->
+
+            <!-- Giriş -->
             <div class="w-48 flex justify-end">
                 <a href="/giris" class="flex items-center space-x-2 text-gray-600 hover:text-yellow-600 p-2 group">
                     <svg class="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -88,12 +74,7 @@ let isDropdownOpen = false;
 function toggleDropdown(event) {
     event.stopPropagation();
     const dropdown = document.getElementById('regionDropdown');
-    // Örnek JavaScript kodu
-    const button = document.getElementById('myButton');
-    button.addEventListener('click', function() {
-        // Butona tıklandığında yapılacak işlemler
-    });
-    
+
     if (!isDropdownOpen) {
         dropdown.classList.remove('hidden');
         isDropdownOpen = true;
@@ -103,7 +84,7 @@ function toggleDropdown(event) {
     }
 }
 
-// Sadece dropdown dışına tıklandığında kapat
+// Dropdown dışına tıklandığında kapanmasını sağla
 document.addEventListener('click', (event) => {
     const dropdown = document.getElementById('regionDropdown');
     const button = document.getElementById('regionButton');
@@ -114,13 +95,7 @@ document.addEventListener('click', (event) => {
     }
 });
 
-// Dropdown içindeki linklere tıklandığında dropdown'u kapatma
-document.querySelectorAll('#regionDropdown a').forEach(link => {
-    link.addEventListener('click', (event) => {
-        event.stopPropagation();
-    });
-});
-
+// Arama işlevi
 document.addEventListener('DOMContentLoaded', function() {
     const searchInput = document.getElementById('searchInput');
     const searchResults = document.getElementById('searchResults');
@@ -132,7 +107,6 @@ document.addEventListener('DOMContentLoaded', function() {
             performSearch(searchTerm);
         });
 
-        // Form submit
         searchForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const searchTerm = searchInput.value.trim();
@@ -141,7 +115,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
-        // Dışarı tıklandığında sonuçları gizle
         document.addEventListener('click', (e) => {
             if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
                 searchResults.classList.add('hidden');
@@ -150,6 +123,15 @@ document.addEventListener('DOMContentLoaded', function() {
     } else {
         console.error('searchInput, searchResults veya searchForm öğesi bulunamadı.');
     }
+});
+
+// Dropdown bağlantılarına tıklama işlevi
+document.querySelectorAll('#regionDropdown a').forEach(link => {
+    link.addEventListener('click', (event) => {
+        event.stopPropagation(); // Dropdown'un kapanmasını engelle
+        const url = link.getAttribute('href'); // Bağlantının URL'sini al
+        window.location.href = url; // Sayfayı yeni URL'ye yönlendir
+    });
 });
 </script>
 
@@ -178,4 +160,8 @@ document.addEventListener('DOMContentLoaded', function() {
 .group:hover svg {
     transform: scale(1.1);
 }
-</style> 
+</style>
+
+</body>
+</html>
+
