@@ -5,7 +5,6 @@ const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const path = require('path');
 const Attraction = require('./models/Attraction');
-const favicon = require('serve-favicon');
 
 // Route dosyalarını import et
 const indexRoutes = require('./routes/index');
@@ -24,8 +23,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 
-// Favicon'ı public/images klasöründen sunuyoruz
-app.use(favicon(path.join(__dirname, 'public', 'images', 'favicon.ico')));
 
 // MongoDB bağlantısı
 mongoose.connect(MONGODB_URI, {
