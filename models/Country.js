@@ -4,7 +4,8 @@ const slugify = require('slugify');
 const countrySchema = new mongoose.Schema({
     name: {
         type: String,
-        required: true
+        required: true,
+        trim: true
     },
     slug: {
         type: String,
@@ -26,18 +27,16 @@ const countrySchema = new mongoose.Schema({
     cities: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'City'
-    }]
-});
+    }],
+    highlights: [String]
+}, { timestamps: true });
 
-countrySchema.pre('save', function(next) {
+// Slug oluşturma middleware
+countrySchema.pre('save', function (next) {
     if (!this.slug || this.isModified('name')) {
-        this.slug = slugify(this.name, {
-            lower: true,
-            strict: true,
-            locale: 'tr'
-        });
+        this.slug = slugify(this.name, { lower: true, strict: true });
     }
     next();
 });
 
-module.exports = mongoose.model('Country', countrySchema); 
+module.exports = mongoose.model('Country', countrySchema);

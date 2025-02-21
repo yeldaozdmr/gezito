@@ -88,12 +88,11 @@
             <h2 class="text-3xl font-bold text-gray-900 mb-8">Popüler Şehirler</h2>
             <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 <% cities.forEach(city => { %>
-                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer" onclick="window.location.href='/sehir/<%= city.slug %>'">
                         <img src="<%= city.imageUrl %>" alt="<%= city.name %>" class="w-full h-48 object-cover">
                         <div class="p-4">
                             <h3 class="text-xl font-semibold text-gray-900"><%= city.name %></h3>
                             <p class="text-gray-600 mt-2 line-clamp-2"><%= city.description %></p>
-                            <a href="/sehir/<%= city.slug %>" class="inline-block mt-4 text-blue-600 hover:text-blue-700">Detayları Gör →</a>
                         </div>
                     </div>
                 <% }); %>
@@ -107,12 +106,11 @@
             <h2 class="text-3xl font-bold text-gray-900 mb-8">Popüler Ülkeler</h2>
             <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 <% countries.forEach(country => { %>
-                    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer" onclick="window.location.href='/ulke/<%= country.slug %>'">
                         <img src="<%= country.flagUrl %>" alt="<%= country.name %>" class="w-full h-48 object-cover">
                         <div class="p-4">
                             <h3 class="text-xl font-semibold text-gray-900"><%= country.name %></h3>
                             <p class="text-gray-600 mt-2 line-clamp-2"><%= country.description %></p>
-                            <a href="/ulke/<%= country.slug %>" class="inline-block mt-4 text-blue-600 hover:text-blue-700">Detayları Gör →</a>
                         </div>
                     </div>
                 <% }); %>

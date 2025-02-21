@@ -49,7 +49,7 @@ const citySchema = new mongoose.Schema({
 }, { timestamps: true });
 
 // Slug oluşturma middleware
-citySchema.pre('save', function(next) {
+citySchema.pre('save', function (next) {
     if (!this.slug || this.isModified('name')) {
         this.slug = slugify(this.name, { lower: true, strict: true });
     }
