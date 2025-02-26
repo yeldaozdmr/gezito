@@ -6,7 +6,6 @@
     <title><%= city.name %> - Şehir Detayları</title>
     <link rel="icon" href="/images/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
-    
 </head>
 <body class="bg-gray-100">
     <%- include('partials/header') %>
@@ -17,14 +16,15 @@
        
         <p class="mb-4"><%= city.description %></p>
 
-          <!-- Meşhur Yemekler Bölümü -->
-          <h2 class="text-2xl font-semibold mb-2 mt-8">Meşhur Yemekler</h2>
-          <div class="bg-white rounded-lg shadow-md p-4">
-              <p>Bu şehirdeki meşhur yemekleri görmek için tıklayın.</p>
-              <a href="/sehir/<%= city.slug %>/yemekler" class="text-blue-500 hover:underline">Meşhur Yemekler</a>
-          </div>
-          <br>
+        <!-- Meşhur Yemekler Bölümü -->
+        <h2 class="text-2xl font-semibold mb-2 mt-8">Meşhur Yemekler</h2>
+        <div class="bg-white rounded-lg shadow-md p-4">
+            <p>Bu şehirdeki meşhur yemekleri görmek için tıklayın.</p>
+            <a href="/sehir/<%= city.slug %>/yemekler" class="text-blue-500 hover:underline">Meşhur Yemekler</a>
+        </div>
+        <br>
 
+        <!-- Gezilecek Yerler -->
         <h2 class="text-2xl font-semibold mb-2">Gezilecek Yerler</h2>
         <div class="space-y-4">
             <% city.attractions.forEach((attraction, index) => { %>
@@ -39,7 +39,17 @@
             <% }); %>
         </div>
 
-      
+        <!-- Yorum Yapma Bölümü -->
+        <div class="mt-8">
+            <h3 class="text-xl font-semibold">Yorum Yap</h3>
+            <form action="/sehir/<%= city.slug %>/yorum" method="POST" class="mt-4">
+                <div class="mb-4">
+                    <textarea name="comment" id="comment" rows="4" class="w-full p-2 border border-gray-300 rounded" required></textarea>
+                </div>
+                <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">Yorum Yap</button>
+            </form>
+        </div>
+
     </div>
 
     <%- include('partials/footer') %>

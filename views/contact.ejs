@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>İletişim</title>
+    <link rel="icon" href="/images/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+</head>
+<body class="bg-gray-100">
+    <%- include('partials/header') %>
+
+    <div class="container mx-auto px-4 py-16">
+        <h1 class="text-3xl font-bold text-gray-900 mb-4">Bize Ulaşın</h1>
+        <p class="text-gray-600 mb-8">Herhangi bir sorunuz veya öneriniz varsa, lütfen aşağıdaki bilgilerle bizimle iletişime geçin.</p>
+
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">İletişim Bilgileri</h2>
+            <ul class="list-disc list-inside">
+                <li><strong>Adres:</strong> Örnek Mah. No: 123, İstanbul, Türkiye</li>
+                <li><strong>E-posta:</strong> <a href="mailto:info@gezito.com" class="text-blue-500 hover:underline">info@gezito.com</a></li>
+                <li><strong>Telefon:</strong> +90 123 456 78 90</li>
+                <li><strong>Instagram:</strong> <a href="https://www.instagram.com/gezito" target="_blank" class="text-blue-500 hover:underline">@gezito</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <%- include('partials/footer') %>
+</body>
+</html>

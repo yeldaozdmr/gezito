@@ -17,12 +17,16 @@
             <div class="p-4">
                 <h1 class="text-3xl font-bold text-gray-900"><%= country.name %></h1>
                 <p class="text-gray-600 mt-2"><%= country.description %></p>
+                
+                <!-- Öne Çıkan Yerler -->
                 <h2 class="text-xl font-semibold mt-4">Öne Çıkan Yerler</h2>
                 <ul class="list-disc list-inside mt-2">
                     <% country.highlights.forEach(highlight => { %>
                         <li class="text-gray-600"><%= highlight %></li>
                     <% }); %>
                 </ul>
+                
+                <!-- Gezilecek Şehirler -->
                 <h2 class="text-xl font-semibold mt-4">Gezilecek Şehirler</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
                     <% country.cities.forEach(city => { %>
@@ -35,6 +39,18 @@
                             </div>
                         </div>
                     <% }); %>
+                </div>
+
+                <!-- Yorum Yapma Bölümü -->
+                <div class="mt-8">
+                    <h3 class="text-xl font-semibold">Yorum Yap</h3>
+                    <form action="/yorum" method="POST" class="mt-4">
+                       
+                        <div class="mb-4">
+                            <textarea name="comment" id="comment" rows="4" class="w-full p-2 border border-gray-300 rounded" required></textarea>
+                        </div>
+                        <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">Yorum Yap</button>
+                    </form>
                 </div>
             </div>
         </div>

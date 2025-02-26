@@ -23,7 +23,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 
-
 // MongoDB bağlantısı
 mongoose.connect(MONGODB_URI, {
     serverSelectionTimeoutMS: 5000
@@ -51,6 +50,37 @@ app.use(session({
 // Routes
 app.use('/', indexRoutes);
 app.use('/auth', authRoutes);
+
+
+// Şehir Detayları Route'u
+app.get('/sehir/:slug', async (req, res) => {
+    try {
+        const citySlug = req.params.slug;  // URL parametresi ile slug alınır
+        const city = await City.findOne({ slug: citySlug }).populate('attractions');  // Şehri slug ile buluyoruz
+        if (!city) {
+            return res.status(404).send('Şehir bulunamadı');  // Şehir bulunamazsa hata
+        }
+        res.render('city-detail', { city });  // Şehir detaylarını city-detail şablonuna gönderiyoruz
+    } catch (err) {
+        res.status(500).send('Bir hata oluştu');  // Hata durumunda 500 döner
+    }
+});
+
+app.get('/sehir/:slug/yemekler', async (req, res) => {
+    try {
+        const citySlug = req.params.slug;
+        const city = await City.findOne({ slug: citySlug }).populate('attractions');
+        if (!city) {
+            return res.status(404).send('Şehir bulunamadı');
+        }
+
+        // Şehir ve yemekler bilgisi ile render et
+        res.render('famous-foods', { citySlug, city });
+    } catch (err) {
+        res.status(500).send('Bir hata oluştu');
+    }
+});
+
 
 // API Endpoint: Tüm turistik yerleri getir
 app.get("/api/attractions", async (req, res) => {
