@@ -148,10 +148,15 @@ router.get('/sehir/:slug/yemekler', async (req, res) => {
         if (!city) {
             return res.status(404).render('error', { message: 'Şehir bulunamadı' });
         }
-        res.render('famous-foods', { city });
+        res.render('famous-foods', { citySlug: city.name, city });
     } catch (error) {
         res.status(500).render('error', { message: 'Bir hata oluştu' });
     }
+});
+
+// Meşhur Yemekler sayfası
+router.get('/meshur-yemekler', (req, res) => {
+    res.render('famous-foods'); // famous-foods.ejs dosyasını render et
 });
 
 module.exports = router;

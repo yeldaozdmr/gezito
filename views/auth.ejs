@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Giriş Yap</title>
+    <title>Kullanıcı Girişi ve Kaydı</title>
     <link rel="icon" href="/images/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
 </head>
@@ -32,83 +32,101 @@
 
             <!-- Giriş Formu -->
             <div id="loginForm" class="space-y-6">
-                <div>
-                    <label for="loginEmail" class="block text-sm font-medium text-gray-700">E-posta</label>
-                    <input 
-                        type="email" 
-                        id="loginEmail" 
-                        class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
-                    >
-                </div>
-                <div>
-                    <label for="loginPassword" class="block text-sm font-medium text-gray-700">Şifre</label>
-                    <input 
-                        type="password" 
-                        id="loginPassword" 
-                        class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
-                    >
-                </div>
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center">
-                       
+                <form action="/auth/login" method="POST">
+                    <div>
+                        <label for="loginEmail" class="block text-sm font-medium text-gray-700">E-posta</label>
+                        <input 
+                            type="email" 
+                            name="email"
+                            id="loginEmail" 
+                            class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+                            required
+                        >
                     </div>
-                    <a href="#" class="text-sm text-yellow-600 hover:text-yellow-700">
-                        Şifremi Unuttum
-                    </a>
-                </div>
-                <button class="w-full py-3 px-4 bg-yellow-600 hover:bg-yellow-700 text-white font-medium rounded-md shadow-sm transition-colors">
-                    Giriş Yap
-                </button>
+                    <div class="mt-4">
+                        <label for="loginPassword" class="block text-sm font-medium text-gray-700">Şifre</label>
+                        <input 
+                            type="password" 
+                            name="password"
+                            id="loginPassword" 
+                            class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+                            required
+                        >
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                           
+                        </div>
+                        <a href="#" class="text-sm text-yellow-600 hover:text-yellow-700">
+                            Şifremi Unuttum
+                        </a>
+                    </div>
+                    <div class="mt-4">
+                        <button type="submit" class="w-full py-3 px-4 bg-yellow-600 hover:bg-yellow-700 text-white font-medium rounded-md shadow-sm transition-colors">
+                            Giriş Yap
+                        </button>
+                    </div>
+                </form>
             </div>
 
             <!-- Kayıt Formu -->
-            <div id="registerForm" class="space-y-6 hidden">
-                <div>
-                    <label for="registerName" class="block text-sm font-medium text-gray-700">Ad Soyad</label>
-                    <input 
-                        type="text" 
-                        id="registerName" 
-                        class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
-                    >
+            <form action="/auth/register" method="POST">
+                <div id="registerForm" class="space-y-6 hidden">
+                    <div>
+                        <label for="registerEmail" class="block text-sm font-medium text-gray-700">E-posta</label>
+                        <input 
+                            type="email" 
+                            name="email"
+                            id="registerEmail" 
+                            class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+                            required
+                        >
+                    </div>
+                    <div>
+                        <label for="registerName" class="block text-sm font-medium text-gray-700">Kullanıcı Adı</label>
+                        <input 
+                            type="text" 
+                            name="username"
+                            id="registerName" 
+                            class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+                            required
+                        >
+                    </div>
+                    <div>
+                        <label for="registerPassword" class="block text-sm font-medium text-gray-700">Şifre</label>
+                        <input 
+                            type="password" 
+                            name="password"
+                            id="registerPassword" 
+                            class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+                            required
+                        >
+                    </div>
+                    <div>
+                        <label for="registerPasswordConfirm" class="block text-sm font-medium text-gray-700">Şifre Tekrar</label>
+                        <input 
+                            type="password" 
+                            name="passwordConfirm"
+                            id="registerPasswordConfirm" 
+                            class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+                            required
+                        >
+                    </div>
+                    <div class="flex items-center">
+                        <input 
+                            type="checkbox" 
+                            id="terms" 
+                            class="h-4 w-4 text-yellow-600 focus:ring-yellow-500 border-gray-300 rounded"
+                        >
+                        <label for="terms" class="ml-2 block text-sm text-gray-700">
+                            <a href="#" class="text-yellow-600 hover:text-yellow-700">Kullanım Şartları</a>'nı kabul ediyorum
+                        </label>
+                    </div>
+                    <button type="submit" class="w-full py-3 px-4 bg-yellow-600 hover:bg-yellow-700 text-white font-medium rounded-md shadow-sm transition-colors">
+                        Kayıt Ol
+                    </button>
                 </div>
-                <div>
-                    <label for="registerEmail" class="block text-sm font-medium text-gray-700">E-posta</label>
-                    <input 
-                        type="email" 
-                        id="registerEmail" 
-                        class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
-                    >
-                </div>
-                <div>
-                    <label for="registerPassword" class="block text-sm font-medium text-gray-700">Şifre</label>
-                    <input 
-                        type="password" 
-                        id="registerPassword" 
-                        class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
-                    >
-                </div>
-                <div>
-                    <label for="registerPasswordConfirm" class="block text-sm font-medium text-gray-700">Şifre Tekrar</label>
-                    <input 
-                        type="password" 
-                        id="registerPasswordConfirm" 
-                        class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
-                    >
-                </div>
-                <div class="flex items-center">
-                    <input 
-                        type="checkbox" 
-                        id="terms" 
-                        class="h-4 w-4 text-yellow-600 focus:ring-yellow-500 border-gray-300 rounded"
-                    >
-                    <label for="terms" class="ml-2 block text-sm text-gray-700">
-                        <a href="#" class="text-yellow-600 hover:text-yellow-700">Kullanım Şartları</a>'nı kabul ediyorum
-                    </label>
-                </div>
-                <button class="w-full py-3 px-4 bg-yellow-600 hover:bg-yellow-700 text-white font-medium rounded-md shadow-sm transition-colors">
-                    Kayıt Ol
-                </button>
-            </div>
+            </form>
 
             <!-- Sosyal Medya ile Giriş -->
             <div class="mt-6">

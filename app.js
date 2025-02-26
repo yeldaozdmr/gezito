@@ -4,18 +4,20 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const path = require('path');
+const City = require('./models/City');  // City modelini import edin
 const Attraction = require('./models/Attraction');
+const User = require('./models/User');
+
 
 // Route dosyalarını import et
 const indexRoutes = require('./routes/index');
 const authRoutes = require('./routes/auth');
 
 const app = express();
-const PORT = process.env.PORT || 3003;
+const PORT = process.env.PORT || 3004;
 
 // MongoDB Atlas URL'i
 const MONGODB_URI = 'mongodb+srv://yeldaozd2:1234@cluster0.j1mpx.mongodb.net/travel-guide?retryWrites=true&w=majority';
-
 // Middleware
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
@@ -24,9 +26,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 
 // MongoDB bağlantısı
-mongoose.connect(MONGODB_URI, {
-    serverSelectionTimeoutMS: 5000
-})
+mongoose.connect(MONGODB_URI)
 .then(() => console.log('✅ MongoDB bağlantısı başarılı'))
 .catch(err => console.error('❌ MongoDB bağlantı hatası:', err.message));
 
@@ -47,6 +47,22 @@ app.use(session({
     cookie: { maxAge: 1000 * 60 * 60 * 24 * 14 }
 }));
 
+// Kullanıcı bilgilerini ve giriş durumunu ayarlayan middleware
+app.use(async (req, res, next) => {
+    res.locals.isAuthenticated = req.session.userId != null; // Kullanıcı giriş yaptıysa true
+    if (req.session.userId) {
+        try {
+            res.locals.user = await User.findById(req.session.userId); // Kullanıcı bilgilerini al
+        } catch (err) {
+            console.error('Kullanıcı bilgileri alınamadı:', err);
+            res.locals.user = null; // Hata durumunda kullanıcı bilgilerini null yap
+        }
+    } else {
+        res.locals.user = null; // Kullanıcı yoksa null
+    }
+    next();
+});
+
 // Routes
 app.use('/', indexRoutes);
 app.use('/auth', authRoutes);
@@ -65,22 +81,6 @@ app.get('/sehir/:slug', async (req, res) => {
         res.status(500).send('Bir hata oluştu');  // Hata durumunda 500 döner
     }
 });
-
-app.get('/sehir/:slug/yemekler', async (req, res) => {
-    try {
-        const citySlug = req.params.slug;
-        const city = await City.findOne({ slug: citySlug }).populate('attractions');
-        if (!city) {
-            return res.status(404).send('Şehir bulunamadı');
-        }
-
-        // Şehir ve yemekler bilgisi ile render et
-        res.render('famous-foods', { citySlug, city });
-    } catch (err) {
-        res.status(500).send('Bir hata oluştu');
-    }
-});
-
 
 // API Endpoint: Tüm turistik yerleri getir
 app.get("/api/attractions", async (req, res) => {

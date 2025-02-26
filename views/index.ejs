@@ -6,9 +6,7 @@
     <title>Gezito</title>
     <link rel="icon" href="/images/favicon.ico" type="image/x-icon">
     <script src="https://cdn.tailwindcss.com"></script>
-  
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-    
 </head>
 <body class="bg-white">
     <%- include('partials/header') %>
@@ -145,125 +143,62 @@
         });
     </script>
 
-    <style>
-        .swiper-slide-active .slide-content {
-            animation: fadeIn 0.5s ease-in-out;
-        }
+<style>
+    .swiper-slide .slide-content {
+        transition: none !important; /* Geçiş efektini kaldır */
+        transform: none !important; /* Dönüşüm efektini kaldır */
+        opacity: 1 !important; /* Opaklığı ayarla */
+    }
 
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+    .swiper-slide-active .slide-content {
+        animation: none !important; /* Animasyonu kaldır */
+    }
 
-        .swiper-slide-inactive .slide-content {
-            opacity: 0;
-        }
-    </style>
+    .swiper-slide:hover .slide-content {
+        transform: none !important; /* Hover durumunda dönüşüm efektini kaldır */
+    }
 
+    .swiper-slide h2,
+    .swiper-slide p {
+        transition: none !important; /* Geçiş efektini kaldır */
+        transform: none !important; /* Dönüşüm efektini kaldır */
+    }
+</style>
     <!-- Arama script'i -->
     <script>
-    const searchInput = document.getElementById('searchInput');
-    const searchResults = document.getElementById('searchResults');
-    const searchForm = document.getElementById('searchForm');
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('searchInput');
+        const searchResults = document.getElementById('searchResults');
+        const searchForm = document.getElementById('searchForm');
 
-    // Arama sonuçlarını göster
-    function showResults(results) {
-        if (results.length > 0) {
-            const resultsHtml = results.map(result => `
-                <a href="/sehir/${result._id}" class="block px-4 py-3 hover:bg-gray-50 transition-colors">
-                    <div class="flex items-center">
-                        <div class="flex-shrink-0">
-                            <img src="${result.imageUrl || '/images/placeholder.jpg'}" 
-                                 alt="${result.name}" 
-                                 class="w-12 h-12 rounded-lg object-cover">
-                        </div>
-                        <div class="ml-3">
-                            <div class="font-medium text-gray-900">${result.name}</div>
-                            <div class="text-sm text-gray-500 line-clamp-1">${result.description || ''}</div>
-                        </div>
-                    </div>
-                </a>
-            `).join('');
+        if (searchInput && searchResults && searchForm) {
+            searchInput.addEventListener('input', (e) => {
+                const searchTerm = e.target.value.trim();
+                performSearch(searchTerm);
+            });
 
-            searchResults.innerHTML = resultsHtml;
-            searchResults.classList.remove('hidden');
+            searchForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const searchTerm = searchInput.value.trim();
+                if (searchTerm) {
+                    window.location.href = `/search?q=${encodeURIComponent(searchTerm)}`;
+                }
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+                    searchResults.classList.add('hidden');
+                }
+            });
         } else {
-            searchResults.innerHTML = `
-                <div class="px-4 py-3 text-sm text-gray-500">
-                    Sonuç bulunamadı
-                </div>
-            `;
-            searchResults.classList.remove('hidden');
-        }
-    }
-
-    // Debounce fonksiyonu
-    function debounce(func, wait) {
-        let timeout;
-        return function(...args) {
-            clearTimeout(timeout);
-            timeout = setTimeout(() => func.apply(this, args), wait);
-        };
-    }
-
-    // Arama işlemi
-    const performSearch = debounce(async (searchTerm) => {
-        if (searchTerm.length < 2) {
-            searchResults.classList.add('hidden');
-            return;
-        }
-
-        try {
-            const response = await fetch(`/api/search?q=${encodeURIComponent(searchTerm)}`);
-            if (!response.ok) throw new Error('Arama hatası');
-            
-            const data = await response.json();
-            showResults(data);
-        } catch (error) {
-            console.error('Arama hatası:', error);
-            searchResults.innerHTML = `
-                <div class="px-4 py-3 text-sm text-red-500">
-                    Arama sırasında bir hata oluştu
-                </div>
-            `;
-            searchResults.classList.remove('hidden');
-        }
-    }, 300);
-
-    // Input event listener
-    searchInput.addEventListener('input', (e) => {
-        const searchTerm = e.target.value.trim();
-        performSearch(searchTerm);
-    });
-
-    // Form submit
-    searchForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const searchTerm = searchInput.value.trim();
-        if (searchTerm) {
-            window.location.href = `/search?q=${encodeURIComponent(searchTerm)}`;
-        }
-    });
-
-    // Dışarı tıklandığında sonuçları gizle
-    document.addEventListener('click', (e) => {
-        if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
-            searchResults.classList.add('hidden');
-        }
-    });
-
-    // ESC tuşuna basıldığında sonuçları gizle
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-            searchResults.classList.add('hidden');
+            console.error('searchInput, searchResults veya searchForm öğesi bulunamadı.');
         }
     });
     </script>
+
+    <form id="searchForm">
+        <input type="text" id="searchInput" placeholder="Ara..." />
+        <div id="searchResults" class="hidden"></div>
+    </form>
 </body>
-</html> 
+</html>
