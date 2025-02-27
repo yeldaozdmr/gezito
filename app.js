@@ -5,13 +5,11 @@ const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const path = require('path');
 const City = require('./models/City');  // City modelini import edin
-const Attraction = require('./models/Attraction');
 const User = require('./models/User');
 
 
 // Route dosyalarını import et
-const indexRoutes = require('./routes/index');
-const authRoutes = require('./routes/auth');
+const indexRoutes = require('./routes/pageRouter');
 
 const app = express();
 const PORT = process.env.PORT || 3004;
@@ -65,7 +63,6 @@ app.use(async (req, res, next) => {
 
 // Routes
 app.use('/', indexRoutes);
-app.use('/auth', authRoutes);
 
 
 // Şehir Detayları Route'u

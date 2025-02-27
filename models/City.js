@@ -11,41 +11,12 @@ const citySchema = new mongoose.Schema({
         type: String,
         unique: true
     },
-    description: {
-        type: String,
-        required: true,
-        trim: true
-    },
-    imageUrl: {
-        type: String,
-        required: true
-    },
-    visitDuration: {
-        type: String,
-        required: true
-    },
-    price: {
-        type: String,
-        required: true
-    },
-    openingHours: {
-        type: String,
-        required: true
-    },
-    location: {
-        category: {
-            type: String,
-            required: true
-        },
-        type: {
-            type: String,
-            required: true
-        }
-    },
-    attractions: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Attraction'
-    }]
+    content: String,
+    populerFoods: String,
+    description: String,
+    imageUrl: String,
+    googleMapsUrl: String,
+    
 }, { timestamps: true });
 
 // Slug oluşturma middleware

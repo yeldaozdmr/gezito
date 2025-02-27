@@ -11,24 +11,11 @@ const countrySchema = new mongoose.Schema({
         type: String,
         unique: true
     },
-    code: {
-        type: String,
-        required: true,
-        unique: true
-    },
-    flagUrl: {
-        type: String,
-        required: true
-    },
+    content: String,
+    flagUrl: String,
+    imageUrl: String,
     description: String,
-    capital: String,
-    population: Number,
-    area: Number,
-    cities: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'City'
-    }],
-    highlights: [String]
+
 }, { timestamps: true });
 
 // Slug oluşturma middleware

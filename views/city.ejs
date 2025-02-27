@@ -25,19 +25,7 @@
         <br>
 
         <!-- Gezilecek Yerler -->
-        <h2 class="text-2xl font-semibold mb-2">Gezilecek Yerler</h2>
-        <div class="space-y-4">
-            <% city.attractions.forEach((attraction, index) => { %>
-                <div class="bg-white rounded-lg shadow-md p-4">
-                    <h3 class="text-xl font-semibold"><%= index + 1 %>. <%= attraction.name %></h3>
-                    <img src="<%= attraction.imageUrl %>" alt="<%= attraction.name %>" class="w-full h-48 object-cover rounded-lg mb-2">
-                    <p class="text-gray-600"><%= attraction.description %></p>
-                    <p><strong>Ziyaret Süresi:</strong> <%= attraction.visitDuration %></p>
-                    <p><strong>Fiyat:</strong> <%= attraction.price %></p>
-                    <p><strong>Açılış Saatleri:</strong> <%= attraction.openingHours %></p>
-                </div>
-            <% }); %>
-        </div>
+ 
 
         <!-- Yorum Yapma Bölümü -->
         <div class="mt-8">
