@@ -21,7 +21,6 @@ router.get('/browse/:type', pageController.getCountries);
 // 🔑 Giriş/Kayıt Sayfası
 router.get('/giris', pageController.getLoginPage);
 
-
 // Kullanıcı kaydı
 router.post('/auth/register', actionController.register);
 
@@ -31,5 +30,13 @@ router.post('/auth/login', actionController.login);
 // Çıkış yapma
 router.get('/auth/logout', actionController.logout);
 
+// İletişim formu gönderimi
+router.post('/contact', actionController.iletisim); // İletişim formunu işleme
+
+// Yorum gönderimi
+router.post('/comments', actionController.addComment); // Yorum gönderme
+
+// Yorumları gösterme
+router.get('/somePage', pageController.getComments); // Yorumları göster
 
 module.exports = router;

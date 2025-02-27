@@ -58,6 +58,7 @@ app.use(async (req, res, next) => {
     } else {
         res.locals.user = null; // Kullanıcı yoksa null
     }
+    res.locals.user = req.session.userId ? { username: req.session.username } : null; // Kullanıcı bilgilerini yerel değişkenlere ekleyin
     next();
 });
 

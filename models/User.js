@@ -4,6 +4,8 @@ const userSchema = new mongoose.Schema({
     username: {
         type: String,
         required: true,
+        minlength: 4,
+        maxlength: 25
     },
     email: {
         type: String,
@@ -20,4 +22,5 @@ const userSchema = new mongoose.Schema({
     }
 });
 
-module.exports = mongoose.model('User', userSchema); 
+const User = mongoose.model('User', userSchema);
+module.exports = User; 

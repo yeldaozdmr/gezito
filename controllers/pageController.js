@@ -1,5 +1,6 @@
 const Country = require('../models/Country');
 const City = require('../models/City');
+const Comment = require('../models/Comment');
 
 
 async function getHomePage(req, res){
@@ -24,12 +25,13 @@ async function getCountryDetails(req, res) {
     const slug = req.params.slug;
     try {
         const country = await Country.findOne({ slug });
+        const comments = await Comment.find({ countryId: country._id }).populate('userId', 'username'); // Ülkeye ait yorumları çek
 
         if (!country) {
             return res.status(404).send('Ülke bulunamadı.');
         }
 
-        res.render('ulke', { country });
+        res.render('ulke', { country, comments }); // Yorumları sayfaya gönder
     } catch (error) {
         console.error('Hata:', error);
         res.status(500).send('Bir hata oluştu.');
@@ -37,12 +39,14 @@ async function getCountryDetails(req, res) {
 }
 
 async function cityDetail(req, res) {
+    const citySlug = req.params.slug;
     try {
-        const citySlug = req.params.slug; // Slug'ı al
-        const city = await City.findOne({ slug: citySlug }); 
+        const city = await City.findOne({ slug: citySlug });
+        const comments = await Comment.find({ cityId: city._id }).populate('userId', 'username'); // Şehre ait yorumları çek
 
         res.render('city', {
             city,
+            comments, // Yorumları sayfaya gönder
             title: `${city.name} Gezi Rehberi - Gezilecek Yerler - Gezito`,
             description: city.description
         });
@@ -107,6 +111,17 @@ async function getCountries (req, res){
     }
 }
 
+// Yorumları gösterme
+async function getComments(req, res) {
+    try {
+        const comments = await Comment.find().populate('userId', 'username'); // Kullanıcı adını da çek
+        res.render('somePage', { comments }); // Yorumları sayfaya gönder
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Yorumları getirirken bir hata oluştu: ' + err.message);
+    }
+}
+
 module.exports = {
     getCountryDetails,
     cityDetail,
@@ -114,5 +129,6 @@ module.exports = {
     getHomePage,
     getContactPage,
     getCountries,
-    getLoginPage
+    getLoginPage,
+    getComments
 };

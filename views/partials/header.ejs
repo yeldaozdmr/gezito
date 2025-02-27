@@ -9,8 +9,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
     <!-- Swiper JS -->
     <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
-
-
+    
     <!-- Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-W9RRLE5Q83"></script>
     <script>
@@ -36,6 +35,7 @@
 
             <!-- Navigation -->
             <nav class="hidden md:flex space-x-8">
+                <a href="/" class="text-gray-600 hover:text-yellow-600 font-light text-base tracking-wider uppercase">Anasayfa</a>
                 <a href="/browse/country"  class="text-gray-600 hover:text-yellow-600 font-light text-base tracking-wider uppercase">Ülkeler</a>
                 <a href="/browse/city"  class="text-gray-600 hover:text-yellow-600 font-light text-base tracking-wider uppercase">Şehirler</a>
                 <a href="/iletisim"  class="text-gray-600 hover:text-yellow-600 font-light text-base tracking-wider uppercase">İletişim</a>
@@ -45,12 +45,24 @@
            
             <!-- Giriş -->
             <div class="w-48 flex justify-end">
-                <a href="/giris" class="flex items-center space-x-2 text-gray-600 hover:text-yellow-600 p-2 group">
-                    <svg class="w-5 h-5 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                    </svg>
-                    <span class="text-sm font-light tracking-wider uppercase">Sign In</span>
-                </a>
+                <nav class="p-4">
+                    <div class="container mx-auto flex justify-between items-center">
+                        <div class="flex items-center relative">
+                            <% if (user) { %>
+                                <div class="relative">
+                                    <span class="text-black mr-4 cursor-pointer hover:text-yellow-600" id="username" onclick="toggleDropdown(event)">
+                                         <%= user.username %>
+                                    </span>
+                                    <div id="dropdownMenu" class="absolute hidden bg-white shadow-lg rounded-md mt-2 z-10">
+                                        <a href="/auth/logout" class="block px-4 py-2 text-black hover:bg-yellow-600 hover:text-white">Çıkış Yap</a>
+                                    </div>
+                                </div>
+                            <% } else { %>
+                                <a href="/giris" class="text-black hover:text-yellow-600 font-light text-base tracking-wider uppercase">Giriş Yap</a>
+                            <% } %>
+                        </div>
+                    </div>
+                </nav>
             </div>
         </div>
     </div>
@@ -61,26 +73,14 @@ let isDropdownOpen = false;
 
 function toggleDropdown(event) {
     event.stopPropagation();
-    const dropdown = document.getElementById('regionDropdown');
-
-    if (!isDropdownOpen) {
-        dropdown.classList.remove('hidden');
-        isDropdownOpen = true;
-    } else {
-        dropdown.classList.add('hidden');
-        isDropdownOpen = false;
-    }
+    const dropdown = document.getElementById('dropdownMenu');
+    dropdown.classList.toggle('hidden');
 }
 
 // Dropdown dışına tıklandığında kapanmasını sağla
-document.addEventListener('click', (event) => {
-    const dropdown = document.getElementById('regionDropdown');
-    const button = document.getElementById('regionButton');
-    
-    if (isDropdownOpen && !dropdown.contains(event.target) && !button.contains(event.target)) {
-        dropdown.classList.add('hidden');
-        isDropdownOpen = false;
-    }
+document.addEventListener('click', () => {
+    const dropdown = document.getElementById('dropdownMenu');
+    dropdown.classList.add('hidden');
 });
 
 // Arama işlevi

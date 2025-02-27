@@ -25,17 +25,25 @@
                 <!-- Yorum Yapma Bölümü -->
                 <div class="mt-8">
                     <h3 class="text-xl font-semibold">Yorum Yap</h3>
-                    <form action="/yorum" method="POST" class="mt-4">
-                       
-                        <div class="mb-4">
-                            <textarea name="comment" id="comment" rows="4" class="w-full p-2 border border-gray-300 rounded" required></textarea>
-                        </div>
-                        <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">Yorum Yap</button>
-                    </form>
+                    <% if (user) { %>
+                        <form action="/comments" method="POST">
+                            <textarea name="content" required placeholder="Yorumunuzu buraya yazın..." class="border rounded p-2 w-full"></textarea>
+                            <input type="hidden" name="countryId" value="<%= country._id %>">
+                            <button type="submit" class="bg-yellow-600 text-white rounded p-2 mt-2">Yorum Gönder</button>
+                        </form>
+                    <% } else { %>
+                        <p>Yorum yapabilmek için <a href="/giris">giriş yapınız</a>.</p>
+                    <% } %>
                 </div>
             </div>
         </div>
     </div>
+
+    <% comments.forEach(comment => { %>
+        <div class="border p-2 mb-2">
+            <strong><%= comment.userId.username %></strong>: <%= comment.content %>
+        </div>
+    <% }) %>
 
     <%- include('partials/footer') %>
 </body>
