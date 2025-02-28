@@ -6,6 +6,7 @@
     <title>İletişim</title>
     <link rel="icon" href="/images/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    <script type="text/javascript" src="https://cdn.emailjs.com/dist/email.min.js"></script>
 </head>
 <body class="bg-gray-50">
     <%- include('partials/header') %>
@@ -13,7 +14,7 @@
     <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
         <div class="max-w-md w-full space-y-8 bg-white p-8 rounded-xl shadow-lg">
             <h2 class="text-center text-2xl font-bold text-gray-700">Bize Ulaşın</h2>
-            <form action="/contact" method="POST">
+            <form id="contactForm">
                 <div>
                     <label for="name" class="block text-sm font-medium text-gray-700">İsim Soyisim</label>
                     <input 
@@ -54,5 +55,32 @@
     </div>
 
     <%- include('partials/footer') %>
+
+    <script>
+        (function(){
+            emailjs.init("service_2rn8h9m"); // EmailJS kullanıcı ID'nizi buraya ekleyin
+        })();
+
+        document.getElementById('contactForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Formun varsayılan gönderimini engelle
+    
+            const formData = new FormData(this);
+            const data = {
+                name: formData.get('name'),
+                email: formData.get('email'),
+                message: formData.get('message')
+            };
+    
+            // EmailJS ile e-posta gönderme
+            emailjs.send("service_2rn8h9m", "template_id", data) // template_id'yi kendi şablon ID'nizle değiştirin
+                .then(function(response) {
+                    console.log('E-posta başarıyla gönderildi!', response.status, response.text);
+                    alert('Mesajınız başarıyla gönderildi!');
+                }, function(error) {
+                    console.error('E-posta gönderiminde hata:', error);
+                    alert('Mesaj gönderiminde bir hata oluştu.');
+                });
+        });
+    </script>
 </body>
 </html>
