@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const Comment = require('../models/Comment');
+const City = require('../models/City');
 
 async function register(req, res) {
     const { username, email, password } = req.body;
@@ -51,12 +52,12 @@ async function iletisim(req, res) {
     console.log(`İsim: ${name}, E-posta: ${email}, Mesaj: ${message}`);
 
     // Başarılı bir şekilde gönderildiğinde kullanıcıyı bilgilendirin
-    res.send('Mesajınız başarıyla gönderildi!');
+    res.render('contact', { successMessage: 'Mesajınız başarıyla gönderildi!' });
 }
 
 // Yorum gönderimi
 async function addComment(req, res) {
-    const { content, cityId, countryId } = req.body;
+    const { content, citySlug, countryId } = req.body;
 
     if (!req.session.userId) {
         return res.status(403).send('Yorum yapabilmek için giriş yapmalısınız.');
@@ -68,16 +69,29 @@ async function addComment(req, res) {
     }
 
     try {
+        const city = await City.findOne({ slug: citySlug });
+        if (!city) {
+            return res.status(404).send('Şehir bulunamadı');
+        }
+
         const newComment = new Comment({
             userId: req.session.userId,
             content,
-            cityId,
+            cityId: city._id,
             countryId
         });
         await newComment.save();
+        
+        // Yorum yapıldıktan sonra ilgili sayfaya yönlendir
+        if (city) {
+            return res.redirect(`/sehir/${city.slug}`);
+        } else if (countryId) {
+            return res.redirect(`/ulke/${countryId}`);
+        }
+        
         res.status(201).send('Yorumunuz başarıyla gönderildi!');
     } catch (err) {
-        console.error(err);
+        console.error('Yorum gönderiminde hata:', err);
         res.status(500).send('Yorum gönderiminde bir hata oluştu: ' + err.message);
     }
 }
@@ -87,5 +101,5 @@ module.exports = {
     login,
     logout,
     iletisim,
-    addComment // Yeni fonksiyonu dışa aktar
+    addComment
 };

@@ -6,7 +6,7 @@
     <title>İletişim</title>
     <link rel="icon" href="/images/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
-    <script type="text/javascript" src="https://cdn.emailjs.com/dist/email.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/emailjs-com@2.6.4/dist/email.min.js"></script>
 </head>
 <body class="bg-gray-50">
     <%- include('partials/header') %>
@@ -57,25 +57,18 @@
     <%- include('partials/footer') %>
 
     <script>
-        (function(){
-            emailjs.init("service_2rn8h9m"); // EmailJS kullanıcı ID'nizi buraya ekleyin
+        (function() {
+            emailjs.init("v4WCUwTKPPM5qLQrc"); // EmailJS kullanıcı ID'nizi buraya ekleyin
         })();
 
         document.getElementById('contactForm').addEventListener('submit', function(event) {
             event.preventDefault(); // Formun varsayılan gönderimini engelle
-    
-            const formData = new FormData(this);
-            const data = {
-                name: formData.get('name'),
-                email: formData.get('email'),
-                message: formData.get('message')
-            };
-    
-            // EmailJS ile e-posta gönderme
-            emailjs.send("service_2rn8h9m", "template_id", data) // template_id'yi kendi şablon ID'nizle değiştirin
+
+            emailjs.sendForm('service_2rn8h9m', 'template_tpch9n8', this)
                 .then(function(response) {
                     console.log('E-posta başarıyla gönderildi!', response.status, response.text);
                     alert('Mesajınız başarıyla gönderildi!');
+                    document.getElementById('contactForm').reset(); // Formu sıfırla
                 }, function(error) {
                     console.error('E-posta gönderiminde hata:', error);
                     alert('Mesaj gönderiminde bir hata oluştu.');

@@ -40,13 +40,17 @@ async function getCountryDetails(req, res) {
 
 async function cityDetail(req, res) {
     const citySlug = req.params.slug;
+    console.log('Şehir slug:', citySlug);
     try {
         const city = await City.findOne({ slug: citySlug });
-        const comments = await Comment.find({ cityId: city._id }).populate('userId', 'username'); // Şehre ait yorumları çek
+        if (!city) {
+            return res.status(404).send('Şehir bulunamadı');
+        }
+        const comments = await Comment.find({ cityId: city._id }).populate('userId', 'username');
 
         res.render('city', {
             city,
-            comments, // Yorumları sayfaya gönder
+            comments,
             title: `${city.name} Gezi Rehberi - Gezilecek Yerler - Gezito`,
             description: city.description
         });

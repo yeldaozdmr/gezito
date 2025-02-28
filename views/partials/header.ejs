@@ -36,9 +36,9 @@
             <!-- Navigation -->
             <nav class="hidden md:flex space-x-8">
                 <a href="/" class="text-gray-600 hover:text-yellow-600 font-light text-base tracking-wider uppercase">Anasayfa</a>
-                <a href="/browse/country"  class="text-gray-600 hover:text-yellow-600 font-light text-base tracking-wider uppercase">Ülkeler</a>
-                <a href="/browse/city"  class="text-gray-600 hover:text-yellow-600 font-light text-base tracking-wider uppercase">Şehirler</a>
-                <a href="/iletisim"  class="text-gray-600 hover:text-yellow-600 font-light text-base tracking-wider uppercase">İletişim</a>
+                <a href="/browse/country" class="text-gray-600 hover:text-yellow-600 font-light text-base tracking-wider uppercase">Ülkeler</a>
+                <a href="/browse/city" class="text-gray-600 hover:text-yellow-600 font-light text-base tracking-wider uppercase">Şehirler</a>
+                <a href="/iletisim" class="text-gray-600 hover:text-yellow-600 font-light text-base tracking-wider uppercase">İletişim</a>
             </nav>
 
             <!-- Arama Çubuğu -->
@@ -69,58 +69,62 @@
 </header>
 
 <script>
-let isDropdownOpen = false;
+    document.addEventListener('DOMContentLoaded', () => {
+        const dropdown = document.getElementById('dropdownMenu');
 
-function toggleDropdown(event) {
-    event.stopPropagation();
-    const dropdown = document.getElementById('dropdownMenu');
-    dropdown.classList.toggle('hidden');
-}
-
-// Dropdown dışına tıklandığında kapanmasını sağla
-document.addEventListener('click', () => {
-    const dropdown = document.getElementById('dropdownMenu');
-    dropdown.classList.add('hidden');
-});
-
-// Arama işlevi
-document.addEventListener('DOMContentLoaded', function() {
-    const searchInput = document.getElementById('searchInput');
-    const searchResults = document.getElementById('searchResults');
-    const searchForm = document.getElementById('searchForm');
-
-    if (searchInput && searchResults && searchForm) {
-        searchInput.addEventListener('input', (e) => {
-            const searchTerm = e.target.value.trim();
-            performSearch(searchTerm);
-        });
-
-        searchForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const searchTerm = searchInput.value.trim();
-            if (searchTerm) {
-                window.location.href = `/search?q=${encodeURIComponent(searchTerm)}`;
+        document.addEventListener('click', () => {
+            if (dropdown) {
+                dropdown.classList.add('hidden');
             }
         });
-
-        document.addEventListener('click', (e) => {
-            if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
-                searchResults.classList.add('hidden');
-            }
-        });
-    } else {
-        console.error('searchInput, searchResults veya searchForm öğesi bulunamadı.');
-    }
-});
-
-// Dropdown bağlantılarına tıklama işlevi
-document.querySelectorAll('#regionDropdown a').forEach(link => {
-    link.addEventListener('click', (event) => {
-        event.stopPropagation(); // Dropdown'un kapanmasını engelle
-        const url = link.getAttribute('href'); // Bağlantının URL'sini al
-        window.location.href = url; // Sayfayı yeni URL'ye yönlendir
     });
-});
+
+    function toggleDropdown(event) {
+        event.stopPropagation();
+        const dropdown = document.getElementById('dropdownMenu');
+        if (dropdown) {
+            dropdown.classList.toggle('hidden');
+        }
+    }
+
+    // Arama işlevi
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('searchInput');
+        const searchResults = document.getElementById('searchResults');
+        const searchForm = document.getElementById('searchForm');
+
+        if (searchInput && searchResults && searchForm) {
+            searchInput.addEventListener('input', (e) => {
+                const searchTerm = e.target.value.trim();
+                performSearch(searchTerm);
+            });
+
+            searchForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const searchTerm = searchInput.value.trim();
+                if (searchTerm) {
+                    window.location.href = `/search?q=${encodeURIComponent(searchTerm)}`;
+                }
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+                    searchResults.classList.add('hidden');
+                }
+            });
+        } else {
+            console.error('searchInput, searchResults veya searchForm öğesi bulunamadı.');
+        }
+    });
+
+    // Dropdown bağlantılarına tıklama işlevi
+    document.querySelectorAll('#regionDropdown a').forEach(link => {
+        link.addEventListener('click', (event) => {
+            event.stopPropagation(); // Dropdown'un kapanmasını engelle
+            const url = link.getAttribute('href'); // Bağlantının URL'sini al
+            window.location.href = url; // Sayfayı yeni URL'ye yönlendir
+        });
+    });
 </script>
 
 </body>

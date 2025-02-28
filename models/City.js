@@ -9,22 +9,19 @@ const citySchema = new mongoose.Schema({
     },
     slug: {
         type: String,
+        required: true,
         unique: true
     },
     content: String,
     populerFoods: String,
-    description: String,
+    description: {
+        type: String,
+        required: true
+    },
     imageUrl: String,
     googleMapsUrl: String,
     
 }, { timestamps: true });
 
-// Slug oluşturma middleware
-citySchema.pre('save', function (next) {
-    if (!this.slug || this.isModified('name')) {
-        this.slug = slugify(this.name, { lower: true, strict: true });
-    }
-    next();
-});
-
-module.exports = mongoose.model('City', citySchema);
+const City = mongoose.model('City', citySchema);
+module.exports = City;
