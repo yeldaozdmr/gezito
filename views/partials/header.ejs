@@ -33,8 +33,17 @@
                 />
             </a>
 
+            <!-- Hamburger Menü -->
+            <div class="md:hidden">
+                <button id="menuButton" class="text-gray-600 hover:text-yellow-600 focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+                    </svg>
+                </button>
+            </div>
+
             <!-- Navigation -->
-            <nav class="hidden md:flex space-x-8">
+            <nav id="navMenu" class="hidden md:flex space-x-8">
                 <a href="/" class="text-gray-600 hover:text-yellow-600 font-light text-base tracking-wider uppercase">Anasayfa</a>
                 <a href="/browse/country" class="text-gray-600 hover:text-yellow-600 font-light text-base tracking-wider uppercase">Ülkeler</a>
                 <a href="/browse/city" class="text-gray-600 hover:text-yellow-600 font-light text-base tracking-wider uppercase">Şehirler</a>
@@ -124,6 +133,14 @@
             const url = link.getAttribute('href'); // Bağlantının URL'sini al
             window.location.href = url; // Sayfayı yeni URL'ye yönlendir
         });
+    });
+
+    // Hamburger menü açma/kapama
+    const menuButton = document.getElementById('menuButton');
+    const navMenu = document.getElementById('navMenu');
+
+    menuButton.addEventListener('click', () => {
+        navMenu.classList.toggle('hidden');
     });
 </script>
 
