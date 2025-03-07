@@ -17,7 +17,7 @@
         <div class="swiper heroSwiper h-full">
             <div class="swiper-wrapper">
                 <div class="swiper-slide relative">
-                    <img src='https://picsum.photos/id/1043/1600/900' alt="Türkiye Gezilecek Yerler" class="w-full h-full object-cover">
+                    <img src='/images/doğal.jpg' alt="Türkiye Gezilecek Yerler" class="w-full h-full object-cover">
                     <div class="absolute inset-0 bg-black bg-opacity-30"></div>
                     <div class="absolute inset-0 flex items-center justify-center text-white text-center z-10">
                         <div class="slide-content">
@@ -28,7 +28,7 @@
                 </div>
                 <!-- Slide 2 -->
                 <div class="swiper-slide relative">
-                    <img src='https://picsum.photos/id/1045/1600/900' alt="Tarihi Mekanlar" class="w-full h-full object-cover">
+                    <img src='/images/tarih.webp' alt="Tarihi Mekanlar" class="w-full h-full object-cover">
                     <div class="absolute inset-0 bg-black bg-opacity-30"></div>
                     <div class="absolute inset-0 flex items-center justify-center text-white text-center">
                         <div>
@@ -39,7 +39,7 @@
                 </div>
                 <!-- Slide 3 -->
                 <div class="swiper-slide relative">
-                    <img src='https://picsum.photos/id/1047/1600/900' alt="Kültürel Yerler" class="w-full h-full object-cover">
+                    <img src='/images/kültür.webp' alt="Kültürel Yerler" class="w-full h-full object-cover">
                     <div class="absolute inset-0 bg-black bg-opacity-30"></div>
                     <div class="absolute inset-0 flex items-center justify-center text-white text-center">
                         <div>
@@ -50,7 +50,7 @@
                 </div>
                 <!-- Slide 4 -->
                 <div class="swiper-slide relative">
-                    <img src='https://picsum.photos/id/1049/1600/900' alt="Turistik Yerler" class="w-full h-full object-cover">
+                    <img src='/images/turistlik.jpg' alt="Turistik Yerler" class="w-full h-full object-cover">
                     <div class="absolute inset-0 bg-black bg-opacity-30"></div>
                     <div class="absolute inset-0 flex items-center justify-center text-white text-center">
                         <div>
@@ -61,7 +61,7 @@
                 </div>
                 <!-- Slide 5 -->
                 <div class="swiper-slide relative">
-                    <img src='https://picsum.photos/id/1051/1600/900' alt="Plajlar" class="w-full h-full object-cover">
+                    <img src='/images/plaj.jpeg' alt="Plajlar" class="w-full h-full object-cover">
                     <div class="absolute inset-0 bg-black bg-opacity-30"></div>
                     <div class="absolute inset-0 flex items-center justify-center text-white text-center">
                         <div>
@@ -88,7 +88,7 @@
             <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 <% cities.forEach(city => { %>
                     <div class="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer" onclick="window.location.href='/sehir/<%= city.slug %>'">
-                        <img src="<%= city.imageUrl %>" alt="<%= city.name %>" class="w-full h-48 object-cover">
+                        <img src="/images/<%= city.slug %>.jpeg" alt="<%= city.name %>" class="w-full h-64 object-cover rounded-lg mb-4 shadow-md">
                         <div class="p-4">
                             <h3 class="text-xl font-semibold text-gray-900"><%= city.name %></h3>
                             <p class="text-gray-600 mt-2 line-clamp-2"><%= city.description %></p>
@@ -106,7 +106,7 @@
             <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 <% countries.forEach(country => { %>
                     <div class="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer" onclick="window.location.href='/ulke/<%= country.slug %>'">
-                        <img src="<%= country.flagUrl %>" alt="<%= country.name %>" class="w-full h-48 object-cover">
+                        <img src="/images/<%= country.slug %>.jpeg" alt="<%= country.name %>" class="w-full h-64 object-cover rounded-lg mb-4 shadow-md">
                         <div class="p-4">
                             <h3 class="text-xl font-semibold text-gray-900"><%= country.name %></h3>
                             <p class="text-gray-600 mt-2 line-clamp-2"><%= country.description %></p>

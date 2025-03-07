@@ -32,11 +32,11 @@ const cities = [
 ];
 
 const countries = [
-    { name: 'Türkiye', slug: 'turkiye', description: 'Türkiye, Asya ve Avrupa kıtalarını birleştiren bir ülkedir.', cities: ['Kapadokya', 'Antalya', 'İzmir', 'Trabzon', 'İstanbul'] },
-    { name: 'Fransa', slug: 'fransa', description: 'Fransa, Avrupa\'nın batısında yer alan bir ülkedir.', cities: ['Paris', 'Nice', 'Lyon', 'Bordeaux', 'Strasbourg'] },
-    { name: 'Japonya', slug: 'japonya', description: 'Japonya, Doğu Asya\'da bir ada ülkesidir.', cities: ['Tokyo', 'Kyoto', 'Osaka', 'Hiroşima', 'Sapporo'] },
-    { name: 'İtalya', slug: 'italya', description: 'İtalya, Akdeniz\'de bir yarımada ülkesidir.', cities: ['Roma', 'Venedik', 'Floransa', 'Milano', 'Napoli'] },
-    { name: 'ABD', slug: 'abd', description: 'ABD, Kuzey Amerika\'da bir ülkedir.', cities: ['New York', 'Los Angeles', 'San Francisco', 'Las Vegas', 'Miami'] }
+    { name: 'Türkiye', slug: 'turkiye', description: 'Türkiye, Asya ve Avrupa kıtalarını birleştiren bir ülkedir.', imageUrl: '/images/turkiye.jpg', cities: ['Kapadokya', 'Antalya', 'İzmir', 'Trabzon', 'İstanbul'] },
+    { name: 'Fransa', slug: 'fransa', description: 'Fransa, Avrupa\'nın batısında yer alan bir ülkedir.', imageUrl: '/images/fransa.jpeg', cities: ['Paris', 'Nice', 'Lyon', 'Bordeaux', 'Strasbourg'] },
+    { name: 'Japonya', slug: 'japonya', description: 'Japonya, Doğu Asya\'da bir ada ülkesidir.', imageUrl: '/images/japonya.jpeg', cities: ['Tokyo', 'Kyoto', 'Osaka', 'Hiroşima', 'Sapporo'] },
+    { name: 'İtalya', slug: 'italya', description: 'İtalya, Akdeniz\'de bir yarımada ülkesidir.', imageUrl: '/images/italya.jpeg', cities: ['Roma', 'Venedik', 'Floransa', 'Milano', 'Napoli'] },
+    { name: 'ABD', slug: 'abd', description: 'ABD, Kuzey Amerika\'da bir ülkedir.', imageUrl: '/images/abd.jpeg', cities: ['New York', 'Los Angeles', 'San Francisco', 'Las Vegas', 'Miami'] }
 ];
 
 async function seedDatabase() {
