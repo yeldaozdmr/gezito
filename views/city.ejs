@@ -17,15 +17,16 @@
         <p class="mb-4"><%= city.description %></p>
 
         <!-- Meşhur Yemekler Bölümü -->
-        <h2 class="text-2xl font-semibold mb-2 mt-8">Meşhur Yemekler</h2>
-        <div class="bg-white rounded-lg shadow-md p-4">
-            <p>Bu şehirdeki meşhur yemekleri görmek için tıklayın.</p>
-            <a href="/sehir/<%= city.slug %>/yemekler" class="text-blue-500 hover:underline">Meşhur Yemekler</a>
-        </div>
-        <br>
-
-        <!-- Gezilecek Yerler -->
- 
+        <% if (city.famousDishes && city.famousDishes.length > 0) { %>
+            <% city.famousDishes.forEach(dish => { %>
+                <div class="bg-white rounded-lg shadow-md p-4">
+                    <img src="<%= dish.imageUrl %>" alt="<%= dish.name %>" class="w-32 h-32 object-cover rounded-lg mb-2">
+                    <h3 class="text-lg font-medium"><%= dish.name %></h3>
+                </div>
+            <% }); %>
+        <% } else { %>
+            <p>Bu şehirdeki meşhur yemekler listesi boş.</p>
+        <% } %>
 
         <!-- Yorum Yapma Bölümü -->
         <div class="mt-8">

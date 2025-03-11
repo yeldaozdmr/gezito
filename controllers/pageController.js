@@ -1,7 +1,9 @@
 const Country = require('../models/Country');
 const City = require('../models/City');
 const Comment = require('../models/Comment');
+const Dish = require('../models/Dish');
 
+// Anasayfa için veri getir
 async function getHomePage(req, res) {
     try {
         const cities = await City.find().sort({ name: 1 }).limit(8);
@@ -12,14 +14,17 @@ async function getHomePage(req, res) {
     }
 }
 
+// İletişim sayfasını render et
 async function getContactPage(req, res) {
     res.render('contact');
 }
 
+// Giriş sayfasını render et
 function getLoginPage(req, res) {
     res.render('auth');
 }
 
+// Ülke detaylarını göster
 async function getCountryDetails(req, res) {
     const slug = req.params.slug;
     try {
@@ -36,6 +41,7 @@ async function getCountryDetails(req, res) {
     }
 }
 
+// Şehir detaylarını göster
 async function cityDetail(req, res) {
     const citySlug = req.params.slug;
     console.log('Şehir slug:', citySlug);
@@ -61,6 +67,7 @@ async function cityDetail(req, res) {
     }
 }
 
+// Tüm şehirleri listele
 async function getCityDetails(req, res) {
     try {
         const cities = await City.find().sort({ name: 1 });
@@ -70,6 +77,7 @@ async function getCityDetails(req, res) {
     }
 }
 
+// Ülke veya şehirleri listele
 async function getCountries(req, res) {
     const { type } = req.params;
     const sortBy = req.query.sort || 'region';
@@ -113,6 +121,7 @@ async function getCountries(req, res) {
     }
 }
 
+// Ülkeleri listele
 async function getCountriesList(req, res) {
     const sortBy = req.query.sort || 'region';
 
@@ -129,6 +138,7 @@ async function getCountriesList(req, res) {
     }
 }
 
+// Şehirleri listele
 async function getCitiesList(req, res) {
     const page = parseInt(req.query.page) || 1;
     const limit = 12;
@@ -157,6 +167,7 @@ async function getCitiesList(req, res) {
     }
 }
 
+// Yorumları al ve göster
 async function getComments(req, res) {
     try {
         const comments = await Comment.find().populate('userId', 'username');
@@ -164,6 +175,17 @@ async function getComments(req, res) {
     } catch (err) {
         console.error(err);
         res.status(500).send('Yorumları getirirken bir hata oluştu: ' + err.message);
+    }
+}
+
+// Yemekleri listele
+async function getDishes(req, res) {
+    const citySlug = req.query.citySlug;
+    try {
+        const dishes = await Dish.find({ cityId: citySlug }).sort({ name: 1 });
+        res.render('dishes', { dishes });
+    } catch (error) {
+        res.status(500).send(error.message);
     }
 }
 
@@ -177,5 +199,6 @@ module.exports = {
     getCountriesList,
     getCitiesList,
     getLoginPage,
-    getComments
+    getComments,
+    getDishes
 };

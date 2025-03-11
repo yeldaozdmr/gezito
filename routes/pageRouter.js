@@ -41,6 +41,9 @@ router.post('/comments', actionController.addComment);
 // Yorumları gösterme
 router.get('/somePage', pageController.getComments);
 
+// Yemekleri listele
+router.get('/dishes', pageController.getDishes);
+
 module.exports = router;
 
 

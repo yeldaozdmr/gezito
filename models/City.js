@@ -2,26 +2,15 @@ const mongoose = require('mongoose');
 const slugify = require('slugify');
 
 const citySchema = new mongoose.Schema({
-    name: {
-        type: String,
-        required: true,
-        trim: true
-    },
-    slug: {
-        type: String,
-        required: true,
-        unique: true
-    },
-    content: String,
-    populerFoods: String,
-    description: {
-        type: String,
-        required: true
-    },
+    name: String,
+    slug: String,
+    description: String,
     imageUrl: String,
-    googleMapsUrl: String,
-    
-}, { timestamps: true });
+    countryId: mongoose.Schema.Types.ObjectId,
+    famousDishes: [{
+        name: String,
+        imageUrl: String
+    }]
+});
 
-const City = mongoose.model('City', citySchema);
-module.exports = City;
+module.exports = mongoose.model('City', citySchema);
