@@ -30,11 +30,17 @@ async function login(req, res) {
         if (user.password !== password) {
             return res.status(400).send('Şifre hatalı');
         }
-        req.session.userId = user._id; // Oturum açma işlemi
-        req.session.username = user.username; // Kullanıcı adını oturuma ekleyin
-        res.redirect('/'); // Anasayfaya yönlendir
+        req.session.userId = user._id;
+        req.session.username = user.username;
+        req.session.role = user.role; // Kullanıcı rolünü session'a ekle
+        
+        if (user.role === 'admin') {
+            res.redirect('/admin');
+        } else {
+            res.redirect('/');
+        }
     } catch (err) {
-        console.error(err); // Hata mesajını konsola yazdır
+        console.error(err);
         res.status(500).send('Giriş sırasında bir hata oluştu: ' + err.message);
     }
 }

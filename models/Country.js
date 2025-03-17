@@ -15,7 +15,7 @@ const countrySchema = new mongoose.Schema({
     flagUrl: String,
     imageUrl: String,
     description: String,
-
+    cities: [{ type: String }] // Şehir isimlerini tutacak
 }, { timestamps: true });
 
 // Slug oluşturma middleware

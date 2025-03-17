@@ -143,37 +143,5 @@
         });
     </script>
 
-
-    <!-- Arama script'i -->
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const searchInput = document.getElementById('searchInput');
-        const searchResults = document.getElementById('searchResults');
-        const searchForm = document.getElementById('searchForm');
-
-        if (searchInput && searchResults && searchForm) {
-            searchInput.addEventListener('input', (e) => {
-                const searchTerm = e.target.value.trim();
-                performSearch(searchTerm);
-            });
-
-            searchForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                const searchTerm = searchInput.value.trim();
-                if (searchTerm) {
-                    window.location.href = `/search?q=${encodeURIComponent(searchTerm)}`;
-                }
-            });
-
-            document.addEventListener('click', (e) => {
-                if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
-                    searchResults.classList.add('hidden');
-                }
-            });
-        } else {
-            console.error('searchInput, searchResults veya searchForm öğesi bulunamadı.');
-        }
-    });
-    </script>
 </body>
 </html>

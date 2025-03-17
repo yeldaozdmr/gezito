@@ -2,6 +2,9 @@ const express = require('express');
 const router = express.Router();
 const pageController = require('../controllers/pageController');
 const actionController = require('../controllers/actionController');
+const slugify = require('slugify');         
+const { ensureAdmin } = require('../middlewares/authMiddleware');
+
 
 // 🌍 Ana Sayfa
 router.get('/', pageController.getHomePage);
@@ -18,7 +21,6 @@ router.get('/iletisim', pageController.getContactPage);
 // 🌍 Ülke & Şehir Listeleme (Gezinme Sayfası)
 router.get('/ulkeler', (req, res) => pageController.getCountriesList(req, res));
 router.get('/sehirler', (req, res) => pageController.getCitiesList(req, res));
-
 
 // 🔑 Giriş/Kayıt Sayfası
 router.get('/giris', pageController.getLoginPage);
@@ -43,6 +45,11 @@ router.get('/somePage', pageController.getComments);
 
 // Yemekleri listele
 router.get('/dishes', pageController.getDishes);
+
+// Admin paneline erişim
+router.get('/admin', ensureAdmin, (req, res) => {
+    res.render('admin');
+});
 
 module.exports = router;
 

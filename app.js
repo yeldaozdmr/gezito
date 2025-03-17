@@ -10,9 +10,10 @@ const User = require('./models/User');
 
 // Route dosyalarını import et
 const indexRoutes = require('./routes/pageRouter');
+const adminRoutes = require('./routes/adminRoutes');
 
 const app = express();
-const PORT = process.env.PORT || 3004;
+const PORT = process.env.PORT || 3005;
 
 // MongoDB Atlas URL'i
 const MONGODB_URI = 'mongodb+srv://yeldaozd2:1234@cluster0.j1mpx.mongodb.net/travel-guide?retryWrites=true&w=majority';
@@ -21,7 +22,10 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(session({ secret: 'your-secret-key', resave: false, saveUninitialized: true }));
 app.use(express.json());
+
+app.use('/', adminRoutes);
 
 // MongoDB bağlantısı
 mongoose.connect(MONGODB_URI)
@@ -109,4 +113,37 @@ process.on('SIGINT', async () => {
         console.log('✅ Bağlantılar kapatıldı, çıkılıyor.');
         process.exit(0);
     });
+});
+
+// Giriş işlemi
+app.post('/login', async (req, res) => {
+    const { email, password } = req.body;
+
+    try {
+        const user = await User.findOne({ email });
+
+        if (!user) {
+            return res.status(401).send('Kullanıcı bulunamadı.');
+        }
+
+        const isMatch = await user.comparePassword(password);
+
+        if (!isMatch) {
+            return res.status(401).send('Yanlış şifre.');
+        }
+
+        // Kullanıcı oturumunu başlat
+        req.session.userId = user._id;
+        req.session.role = user.role; // Burada role doğru ayarlanmalı
+
+        // Kullanıcı rolünü kontrol et ve yönlendir
+        if (user.role === 'admin') {
+            return res.redirect('/admin');
+        } else {
+            return res.redirect('/user');
+        }
+    } catch (error) {
+        console.error('Giriş hatası:', error);
+        res.status(500).send('Bir hata oluştu.');
+    }
 });

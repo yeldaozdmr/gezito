@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Paneli</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    <script src="https://cdn.tiny.cloud/1/96dma7ctwc5lu5m0n71vfinzblada8qzrv9lqdnw7r5gagu8/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+    <script type="text/javascript">
+        tinymce.init({
+            selector: "textarea"
+        });
+    </script>
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-4xl font-bold mb-4">Admin Paneli</h1>
+        
+        <!-- Ülke Ekleme Formu -->
+        <div class="mb-8">
+            <h2 class="text-2xl font-semibold mb-4">Ülke Ekle</h2>
+            <form action="/admin/add-country" method="POST" class="space-y-4">
+                <div>
+                    <label for="countryName" class="block text-sm font-medium text-gray-700">Ülke Adı</label>
+                    <input type="text" id="countryName" name="name" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500">
+                </div>
+                <div>
+                    <label for="countryDescription" class="block text-sm font-medium text-gray-700">Açıklama</label>
+                    <textarea id="countryDescription" name="description" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"></textarea>
+                </div>
+                <button type="submit" class="bg-yellow-600 text-white rounded p-2">Ekle</button>
+            </form>
+        </div>
+
+        <!-- Şehir Ekleme Formu -->
+        <div>
+            <h2 class="text-2xl font-semibold mb-4">Şehir Ekle</h2>
+            <form action="/admin/add-city" method="POST" class="space-y-4">
+                <div>
+                    <label for="cityName" class="block text-sm font-medium text-gray-700">Şehir Adı</label>
+                    <input type="text" id="cityName" name="name" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500">
+                </div>
+                <div>
+                    <label for="countryId" class="block text-sm font-medium text-gray-700">Ülke</label>
+                    <select id="countryId" name="countryId" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500">
+                        <% countries.forEach(country => { %>
+                            <option value="<%= country._id %>"><%= country.name %></option>
+                        <% }) %>
+                    </select>
+                </div>
+                <div>
+                    <label for="cityDescription" class="block text-sm font-medium text-gray-700">Açıklama</label>
+                    <textarea id="cityDescription" name="description" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"></textarea>
+                </div>
+                <button type="submit" class="bg-yellow-600 text-white rounded p-2">Ekle</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
