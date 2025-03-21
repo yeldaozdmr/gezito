@@ -235,15 +235,15 @@ async function getDishes(req, res) {
 }
 
 module.exports = {
+    getHomePage,
+    getContactPage,
+    getLoginPage,
     getCountryDetails,
     cityDetail,
     getCityDetails,
-    getHomePage,
-    getContactPage,
     getCountries,
     getCountriesList,
     getCitiesList,
-    getLoginPage,
     getComments,
     getDishes
 };

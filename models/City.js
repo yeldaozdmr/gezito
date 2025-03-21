@@ -33,46 +33,72 @@ const citySchema = new mongoose.Schema({
 }, { timestamps: true });
 
 // Slug oluşturma middleware
-citySchema.pre('save', function(next) {
-    if (!this.isModified('name')) {
+citySchema.pre('save', async function(next) {
+    // Eğer name değişmediyse veya slug manuel olarak ayarlandıysa işlem yapma
+    if (!this.isModified('name') || this.isModified('slug')) {
         return next();
     }
-    
+
     try {
-        this.slug = slugify(this.name, {
+        const baseSlug = slugify(this.name, {
             lower: true,
             strict: true,
             locale: 'tr'
         });
+
+        // Benzersiz slug oluştur
+        let slugToCheck = baseSlug;
+        let counter = 1;
+        
+        while (await mongoose.models.City.findOne({ 
+            slug: slugToCheck, 
+            _id: { $ne: this._id } 
+        })) {
+            slugToCheck = `${baseSlug}-${counter}`;
+            counter++;
+        }
+        
+        this.slug = slugToCheck;
         next();
     } catch (error) {
         next(error);
     }
 });
 
-// Güncelleme işlemlerinde de slug'ı otomatik oluştur
+// Güncelleme işlemlerinde slug oluşturma
 citySchema.pre('findOneAndUpdate', async function(next) {
     const update = this.getUpdate();
-    if (update.name && !update.slug) {
-        let baseSlug = slugify(update.name, {
+    
+    // Eğer name değişmediyse veya slug manuel olarak ayarlandıysa işlem yapma
+    if (!update.name || update.slug) {
+        return next();
+    }
+
+    try {
+        const baseSlug = slugify(update.name, {
             lower: true,
             strict: true,
             locale: 'tr'
         });
-        update.slug = `${baseSlug}-gezilecek-yerler`;
-        
-        // Eğer aynı slug varsa, sonuna numara ekle
+
+        // Benzersiz slug oluştur
+        let slugToCheck = baseSlug;
         let counter = 1;
+        
         const docToUpdate = await this.model.findOne(this.getQuery());
         while (await mongoose.models.City.findOne({ 
-            slug: update.slug, 
+            slug: slugToCheck, 
             _id: { $ne: docToUpdate._id } 
         })) {
-            update.slug = `${baseSlug}-${counter}-gezilecek-yerler`;
+            slugToCheck = `${baseSlug}-${counter}`;
             counter++;
         }
+        
+        update.slug = slugToCheck;
+        next();
+    } catch (error) {
+        next(error);
     }
-    next();
 });
 
 const City = mongoose.model('City', citySchema);
