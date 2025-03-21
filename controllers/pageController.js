@@ -47,11 +47,10 @@ async function getCountryDetails(req, res) {
             return res.status(404).send('Ülke bulunamadı.');
         }
 
-        // Ülke fotoğrafını slug'a göre ayarla
-        if (!country.imageUrl) {
-            country.imageUrl = `/images/${country.slug}.jpg`;
-        }
+        // Ülke fotoğrafını ayarla
+        country.imageUrl = `/images/${country.slug}.jpg`;
 
+        // Yorumları getir
         const comments = await Comment.find({ countryId: country._id }).populate('userId', 'username');
         res.render('ulke', { country, comments });
     } catch (error) {
@@ -63,18 +62,16 @@ async function getCountryDetails(req, res) {
 // Şehir detaylarını göster
 async function cityDetail(req, res) {
     const citySlug = req.params.slug;
-    console.log('Şehir slug:', citySlug);
     try {
         const city = await City.findOne({ slug: citySlug });
         if (!city) {
             return res.status(404).send('Şehir bulunamadı');
         }
 
-        // Şehir fotoğrafını slug'a göre ayarla
-        if (!city.imageUrl) {
-            city.imageUrl = `/images/${city.slug}.jpg`;
-        }
+        // Şehir fotoğrafını ayarla
+        city.imageUrl = `/images/${city.slug}.jpg`;
 
+        // Yorumları getir
         const comments = await Comment.find({ cityId: city._id }).populate('userId', 'username');
         res.render('city', {
             city,

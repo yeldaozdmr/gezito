@@ -1,17 +1,21 @@
+// Admin yetkisi kontrolü
 function ensureAdmin(req, res, next) {
     // Önce oturum kontrolü
     if (!req.session || !req.session.userId) {
         console.log('Oturum bulunamadı:', req.session);
-        return res.redirect('/login');
+        return res.redirect('/giris');
     }
 
-    // Sonra admin rolü kontrolü
-    if (req.session.role !== 'admin') {
-        console.log('Admin yetkisi yok:', req.session);
-        return res.status(403).send('Bu sayfaya erişim izniniz yok.');
+    // Sonra admin yetkisi kontrolü
+    if (req.session.role === 'admin') {
+        return next();
     }
 
-    next();
+    // Yetkisiz erişim
+    console.log('Yetkisiz erişim denemesi:', req.session);
+    return res.status(403).send('Bu sayfaya erişim izniniz yok.');
 }
 
-module.exports = { ensureAdmin };
+module.exports = {
+    ensureAdmin
+};

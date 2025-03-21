@@ -10,30 +10,42 @@ const countrySchema = new mongoose.Schema({
     slug: {
         type: String,
         unique: true,
-        lowercase: true
+        lowercase: true,
+        trim: true
     },
-    content: String,
-    flagUrl: String,
-    imageUrl: String,
-    description: String,
-    cities: [{ type: String }] // Şehir isimlerini tutacak
+    description: {
+        type: String,
+        trim: true
+    },
+    imageUrl: {
+        type: String,
+        trim: true
+    },
+    cities: [{ 
+        type: String,
+        trim: true 
+    }]
 }, { timestamps: true });
 
 // Slug oluşturma middleware
 countrySchema.pre('save', async function(next) {
     if (this.isModified('name') && !this.isModified('slug')) {
-        let baseSlug = slugify(this.name, {
-            lower: true,
-            strict: true,
-            locale: 'tr'
-        });
-        this.slug = `${baseSlug}-gezilecek-yerler`;
-        
-        // Eğer aynı slug varsa, sonuna numara ekle
-        let counter = 1;
-        while (await mongoose.models.Country.findOne({ slug: this.slug, _id: { $ne: this._id } })) {
-            this.slug = `${baseSlug}-${counter}-gezilecek-yerler`;
-            counter++;
+        try {
+            let baseSlug = slugify(this.name, {
+                lower: true,
+                strict: true,
+                locale: 'tr'
+            });
+            this.slug = `${baseSlug}-gezilecek-yerler`;
+            
+            // Eğer aynı slug varsa, sonuna numara ekle
+            let counter = 1;
+            while (await mongoose.models.Country.findOne({ slug: this.slug, _id: { $ne: this._id } })) {
+                this.slug = `${baseSlug}-${counter}-gezilecek-yerler`;
+                counter++;
+            }
+        } catch (error) {
+            return next(error);
         }
     }
     next();
@@ -43,22 +55,26 @@ countrySchema.pre('save', async function(next) {
 countrySchema.pre('findOneAndUpdate', async function(next) {
     const update = this.getUpdate();
     if (update.name && !update.slug) {
-        let baseSlug = slugify(update.name, {
-            lower: true,
-            strict: true,
-            locale: 'tr'
-        });
-        update.slug = `${baseSlug}-gezilecek-yerler`;
-        
-        // Eğer aynı slug varsa, sonuna numara ekle
-        let counter = 1;
-        const docToUpdate = await this.model.findOne(this.getQuery());
-        while (await mongoose.models.Country.findOne({ 
-            slug: update.slug, 
-            _id: { $ne: docToUpdate._id } 
-        })) {
-            update.slug = `${baseSlug}-${counter}-gezilecek-yerler`;
-            counter++;
+        try {
+            let baseSlug = slugify(update.name, {
+                lower: true,
+                strict: true,
+                locale: 'tr'
+            });
+            update.slug = `${baseSlug}-gezilecek-yerler`;
+            
+            // Eğer aynı slug varsa, sonuna numara ekle
+            let counter = 1;
+            const docToUpdate = await this.model.findOne(this.getQuery());
+            while (await mongoose.models.Country.findOne({ 
+                slug: update.slug, 
+                _id: { $ne: docToUpdate._id } 
+            })) {
+                update.slug = `${baseSlug}-${counter}-gezilecek-yerler`;
+                counter++;
+            }
+        } catch (error) {
+            return next(error);
         }
     }
     next();
