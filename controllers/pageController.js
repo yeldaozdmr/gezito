@@ -6,8 +6,10 @@ const Dish = require('../models/Dish');
 // Anasayfa için veri getir
 async function getHomePage(req, res) {
     try {
-        const cities = await City.find().sort({ name: 1 }).limit(8);
-        const countries = await Country.find().sort({ name: 1 }).limit(8);
+        const [cities, countries] = await Promise.all([
+            City.find().sort({ name: 1 }).limit(8),
+            Country.find().sort({ name: 1 }).limit(8)
+        ]);
 
         cities.forEach(city => city.imageUrl = `/images/${city.slug}.jpg`);
         countries.forEach(country => country.imageUrl = `/images/${country.slug}.jpg`);
@@ -30,9 +32,8 @@ function getLoginPage(req, res) {
 
 // Ülke detaylarını göster
 async function getCountryDetails(req, res) {
-    const slug = req.params.slug;
     try {
-        const country = await Country.findOne({ slug });
+        const country = await Country.findOne({ slug: req.params.slug });
         if (!country) return res.status(404).send('Ülke bulunamadı.');
 
         country.imageUrl = `/images/${country.slug}.jpg`;
@@ -46,10 +47,9 @@ async function getCountryDetails(req, res) {
 
 // Şehir detaylarını göster
 async function cityDetail(req, res) {
-    const citySlug = req.params.slug;
     try {
-        const city = await City.findOne({ slug: citySlug });
-        if (!city) return res.status(404).send('Şehir bulunamadı');
+        const city = await City.findOne({ slug: req.params.slug });
+        if (!city) return res.status(404).send('Şehir bulunamadı.');
 
         city.imageUrl = `/images/${city.slug}.jpg`;
         const comments = await Comment.find({ cityId: city._id }).populate('userId', 'username');
@@ -72,10 +72,12 @@ async function getCitiesList(req, res) {
     const skip = (page - 1) * limit;
 
     try {
-        const cities = await City.find().sort({ name: 1 }).skip(skip).limit(limit);
-        cities.forEach(city => city.imageUrl = `/images/${city.slug}.jpg`);
+        const [cities, totalCities] = await Promise.all([
+            City.find().sort({ name: 1 }).skip(skip).limit(limit),
+            City.countDocuments()
+        ]);
         
-        const totalCities = await City.countDocuments();
+        cities.forEach(city => city.imageUrl = `/images/${city.slug}.jpg`);
         const totalPages = Math.ceil(totalCities / limit);
 
         res.render('browse', {
@@ -120,9 +122,8 @@ async function getComments(req, res) {
 
 // Yemekleri listele
 async function getDishes(req, res) {
-    const citySlug = req.query.citySlug;
     try {
-        const dishes = await Dish.find({ cityId: citySlug }).sort({ name: 1 });
+        const dishes = await Dish.find({ cityId: req.query.citySlug }).sort({ name: 1 });
         res.render('dishes', { dishes });
     } catch (error) {
         res.status(500).send(error.message);
