@@ -19,8 +19,8 @@ router.get('/sehir/:slug', pageController.cityDetail);
 router.get('/iletisim', pageController.getContactPage);
 
 // 🌍 Ülke & Şehir Listeleme (Gezinme Sayfası)
-router.get('/ulkeler', (req, res) => pageController.getCountriesList(req, res));
-router.get('/sehirler', (req, res) => pageController.getCitiesList(req, res));
+router.get('/ulkeler', pageController.getCountriesList);
+router.get('/sehirler', pageController.getCitiesList);
 
 // 🔑 Giriş/Kayıt Sayfası
 router.get('/giris', pageController.getLoginPage);

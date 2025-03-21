@@ -84,101 +84,7 @@ async function cityDetail(req, res) {
     }
 }
 
-// Tüm şehirleri listele
-async function getCityDetails(req, res) {
-    try {
-        const cities = await City.find().sort({ name: 1 });
-        
-        // Şehir fotoğraflarını ayarla
-        cities.forEach(city => {
-            city.imageUrl = `/images/${city.slug}.jpg`;
-        });
-
-        res.render('cities', { cities });
-    } catch (error) {
-        res.status(500).send(error.message);
-    }
-}
-
-// Ülke veya şehirleri listele
-async function getCountries(req, res) {
-    const { type } = req.params;
-    const sortBy = req.query.sort || 'region';
-
-    try {
-        if (type === 'country') {
-            const countries = await Country.find().sort({ name: 1 });
-            
-            // Ülke fotoğraflarını ayarla
-            countries.forEach(country => {
-                country.imageUrl = `/images/${country.slug}.jpg`;
-            });
-
-            res.render('browse', { 
-                type: 'country', 
-                title: 'Ülkeler',
-                countries,
-                sortBy
-            });
-        } else if (type === 'city') {
-            const page = parseInt(req.query.page) || 1;
-            const limit = 12;
-            const skip = (page - 1) * limit;
-
-            const cities = await City.find()
-                .sort({ name: 1 })
-                .skip(skip)
-                .limit(limit);
-
-            // Şehir fotoğraflarını ayarla
-            cities.forEach(city => {
-                city.imageUrl = `/images/${city.slug}.jpg`;
-            });
-
-            const totalCities = await City.countDocuments();
-            const totalPages = Math.ceil(totalCities / limit);
-
-            res.render('browse', { 
-                type: 'city', 
-                title: 'Şehirler',
-                cities,
-                currentPage: page,
-                totalPages,
-                hasNextPage: page < totalPages,
-                hasPrevPage: page > 1
-            });
-        } else {
-            res.status(404).send('Sayfa bulunamadı');
-        }
-    } catch (error) {
-        res.status(500).send(error.message);
-    }
-}
-
-// Ülkeleri listele
-async function getCountriesList(req, res) {
-    const sortBy = req.query.sort || 'region';
-
-    try {
-        const countries = await Country.find().sort({ name: 1 });
-        
-        // Ülke fotoğraflarını ayarla
-        countries.forEach(country => {
-            country.imageUrl = `/images/${country.slug}.jpg`;
-        });
-
-        res.render('browse', {
-            type: 'country',
-            title: 'Ülkeler',
-            countries,
-            sortBy
-        });
-    } catch (error) {
-        res.status(500).send(error.message);
-    }
-}
-
-// Şehirleri listele
+// Tüm şehirleri listele (sayfalama ile)
 async function getCitiesList(req, res) {
     const page = parseInt(req.query.page) || 1;
     const limit = 12;
@@ -212,6 +118,29 @@ async function getCitiesList(req, res) {
     }
 }
 
+// Tüm ülkeleri listele
+async function getCountriesList(req, res) {
+    const sortBy = req.query.sort || 'region';
+
+    try {
+        const countries = await Country.find().sort({ name: 1 });
+        
+        // Ülke fotoğraflarını ayarla
+        countries.forEach(country => {
+            country.imageUrl = `/images/${country.slug}.jpg`;
+        });
+
+        res.render('browse', {
+            type: 'country',
+            title: 'Ülkeler',
+            countries,
+            sortBy
+        });
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
+}
+
 // Yorumları al ve göster
 async function getComments(req, res) {
     try {
@@ -235,15 +164,13 @@ async function getDishes(req, res) {
 }
 
 module.exports = {
-    getHomePage,
-    getContactPage,
-    getLoginPage,
-    getCountryDetails,
     cityDetail,
-    getCityDetails,
-    getCountries,
-    getCountriesList,
-    getCitiesList,
     getComments,
-    getDishes
+    getContactPage,
+    getCountriesList,
+    getCountryDetails,
+    getCitiesList,
+    getDishes,
+    getHomePage,
+    getLoginPage
 };

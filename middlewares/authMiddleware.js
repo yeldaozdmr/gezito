@@ -22,6 +22,7 @@ const ensureAdmin = (req, res, next) => {
 // Oturum kontrolü middleware'i
 const ensureAuth = (req, res, next) => {
     if (!req.session || !req.session.userId) {
+        console.log('Oturum bulunamadı:', req.session);
         return res.redirect('/giris');
     }
     next();
