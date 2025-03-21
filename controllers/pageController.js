@@ -8,6 +8,20 @@ async function getHomePage(req, res) {
     try {
         const cities = await City.find().sort({ name: 1 }).limit(8);
         const countries = await Country.find().sort({ name: 1 }).limit(8);
+
+        // Şehir ve ülke fotoğraflarını slug'a göre ayarla
+        cities.forEach(city => {
+            if (!city.imageUrl) {
+                city.imageUrl = `/images/${city.slug}.jpg`;
+            }
+        });
+
+        countries.forEach(country => {
+            if (!country.imageUrl) {
+                country.imageUrl = `/images/${country.slug}.jpg`;
+            }
+        });
+
         res.render('index', { cities, countries });
     } catch (error) {
         res.status(500).send(error.message);
@@ -32,8 +46,13 @@ async function getCountryDetails(req, res) {
         if (!country) {
             return res.status(404).send('Ülke bulunamadı.');
         }
-        const comments = await Comment.find({ countryId: country._id }).populate('userId', 'username');
 
+        // Ülke fotoğrafını slug'a göre ayarla
+        if (!country.imageUrl) {
+            country.imageUrl = `/images/${country.slug}.jpg`;
+        }
+
+        const comments = await Comment.find({ countryId: country._id }).populate('userId', 'username');
         res.render('ulke', { country, comments });
     } catch (error) {
         console.error('Hata:', error);
@@ -50,8 +69,13 @@ async function cityDetail(req, res) {
         if (!city) {
             return res.status(404).send('Şehir bulunamadı');
         }
-        const comments = await Comment.find({ cityId: city._id }).populate('userId', 'username');
 
+        // Şehir fotoğrafını slug'a göre ayarla
+        if (!city.imageUrl) {
+            city.imageUrl = `/images/${city.slug}.jpg`;
+        }
+
+        const comments = await Comment.find({ cityId: city._id }).populate('userId', 'username');
         res.render('city', {
             city,
             comments,
@@ -127,6 +151,14 @@ async function getCountriesList(req, res) {
 
     try {
         const countries = await Country.find().sort({ name: 1 });
+        
+        // Ülke fotoğraflarını slug'a göre ayarla
+        countries.forEach(country => {
+            if (!country.imageUrl) {
+                country.imageUrl = `/images/${country.slug}.jpg`;
+            }
+        });
+
         res.render('browse', {
             type: 'country',
             title: 'Ülkeler',
@@ -149,6 +181,13 @@ async function getCitiesList(req, res) {
             .sort({ name: 1 })
             .skip(skip)
             .limit(limit);
+
+        // Şehir fotoğraflarını slug'a göre ayarla
+        cities.forEach(city => {
+            if (!city.imageUrl) {
+                city.imageUrl = `/images/${city.slug}.jpg`;
+            }
+        });
 
         const totalCities = await City.countDocuments();
         const totalPages = Math.ceil(totalCities / limit);

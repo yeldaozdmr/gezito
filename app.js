@@ -20,7 +20,12 @@ const MONGODB_URI = 'mongodb+srv://yeldaozd2:1234@cluster0.j1mpx.mongodb.net/tra
 // Middleware
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
+
+// Statik dosya servisi
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')));
+app.use('/images', express.static(path.join(__dirname, 'public/images')));
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(session({ secret: 'your-secret-key', resave: false, saveUninitialized: true }));
 app.use(express.json());
@@ -134,13 +139,14 @@ app.post('/login', async (req, res) => {
 
         // Kullanıcı oturumunu başlat
         req.session.userId = user._id;
-        req.session.role = user.role; // Burada role doğru ayarlanmalı
+        req.session.username = user.username;
+        req.session.role = user.role; // Kullanıcı rolünü oturuma kaydet
 
         // Kullanıcı rolünü kontrol et ve yönlendir
         if (user.role === 'admin') {
             return res.redirect('/admin');
         } else {
-            return res.redirect('/user');
+            return res.redirect('/');
         }
     } catch (error) {
         console.error('Giriş hatası:', error);

@@ -5,55 +5,188 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Paneli</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.tiny.cloud/1/96dma7ctwc5lu5m0n71vfinzblada8qzrv9lqdnw7r5gagu8/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
-    <script type="text/javascript">
+    <script>
         tinymce.init({
-            selector: "textarea"
+            selector: "textarea.editor",
+            plugins: 'advlist autolink lists link image charmap print preview anchor',
+            toolbar: 'undo redo | formatselect | bold italic | alignleft aligncenter alignright | bullist numlist outdent indent | link image'
         });
+
+        function toggleForm(formId) {
+            const forms = document.querySelectorAll('.content-form');
+            forms.forEach(form => form.classList.add('hidden'));
+            document.getElementById(formId).classList.remove('hidden');
+        }
+
+        function showList(listId) {
+            const lists = document.querySelectorAll('.content-list');
+            lists.forEach(list => list.classList.add('hidden'));
+            document.getElementById(listId).classList.remove('hidden');
+        }
     </script>
 </head>
 <body class="bg-gray-100">
-    <div class="container mx-auto px-4 py-8">
-        <h1 class="text-4xl font-bold mb-4">Admin Paneli</h1>
-        
-        <!-- Ülke Ekleme Formu -->
-        <div class="mb-8">
-            <h2 class="text-2xl font-semibold mb-4">Ülke Ekle</h2>
-            <form action="/admin/add-country" method="POST" class="space-y-4">
+    <div class="flex min-h-screen">
+        <!-- Sol Menü -->
+        <div class="w-64 bg-yellow-600 text-white p-6">
+            <h1 class="text-2xl font-bold mb-8">Admin Paneli</h1>
+            <nav class="space-y-4">
                 <div>
-                    <label for="countryName" class="block text-sm font-medium text-gray-700">Ülke Adı</label>
-                    <input type="text" id="countryName" name="name" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500">
+                    <button onclick="showList('countryList')" class="w-full text-left py-2 px-4 hover:bg-yellow-700 rounded">
+                        <span>Ülkeler</span>
+                    </button>
                 </div>
                 <div>
-                    <label for="countryDescription" class="block text-sm font-medium text-gray-700">Açıklama</label>
-                    <textarea id="countryDescription" name="description" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"></textarea>
+                    <button onclick="showList('cityList')" class="w-full text-left py-2 px-4 hover:bg-yellow-700 rounded">
+                        <span>Şehirler</span>
+                    </button>
                 </div>
-                <button type="submit" class="bg-yellow-600 text-white rounded p-2">Ekle</button>
-            </form>
+            </nav>
         </div>
 
-        <!-- Şehir Ekleme Formu -->
-        <div>
-            <h2 class="text-2xl font-semibold mb-4">Şehir Ekle</h2>
-            <form action="/admin/add-city" method="POST" class="space-y-4">
-                <div>
-                    <label for="cityName" class="block text-sm font-medium text-gray-700">Şehir Adı</label>
-                    <input type="text" id="cityName" name="name" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500">
+        <!-- Ana İçerik -->
+        <div class="flex-1 p-8">
+            <!-- Ülke Ekleme Formu -->
+            <div id="addCountryForm" class="content-form hidden bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-2xl font-semibold mb-4">Ülke Ekle</h2>
+                <form action="/admin/add-country" method="POST" enctype="multipart/form-data" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Ülke Adı</label>
+                        <input type="text" name="name" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Açıklama</label>
+                        <textarea name="description" class="editor mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Fotoğraf</label>
+                        <input type="file" name="image" accept="image/*" class="mt-1 block w-full">
+                    </div>
+                    <button type="submit" class="bg-yellow-600 text-white px-4 py-2 rounded hover:bg-yellow-700">Ekle</button>
+                </form>
+            </div>
+
+            <!-- Şehir Ekleme Formu -->
+            <div id="addCityForm" class="content-form hidden bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-2xl font-semibold mb-4">Şehir Ekle</h2>
+                <form action="/admin/add-city" method="POST" enctype="multipart/form-data" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Şehir Adı</label>
+                        <input type="text" name="name" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Ülke</label>
+                        <select name="countryId" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md">
+                            <% countries.forEach(country => { %>
+                                <option value="<%= country._id %>"><%= country.name %></option>
+                            <% }) %>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Açıklama</label>
+                        <textarea name="description" class="editor mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Fotoğraf</label>
+                        <input type="file" name="image" accept="image/*" class="mt-1 block w-full">
+                    </div>
+                    <button type="submit" class="bg-yellow-600 text-white px-4 py-2 rounded hover:bg-yellow-700">Ekle</button>
+                </form>
+            </div>
+
+            <!-- Ülke Listesi -->
+            <div id="countryList" class="content-list hidden">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-2xl font-semibold">Ülkeler</h2>
+                    <button onclick="toggleForm('addCountryForm')" class="bg-yellow-600 text-white px-4 py-2 rounded-full hover:bg-yellow-700">
+                        <i class="fas fa-plus"></i> Yeni Ülke
+                    </button>
                 </div>
-                <div>
-                    <label for="countryId" class="block text-sm font-medium text-gray-700">Ülke</label>
-                    <select id="countryId" name="countryId" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500">
-                        <% countries.forEach(country => { %>
-                            <option value="<%= country._id %>"><%= country.name %></option>
-                        <% }) %>
-                    </select>
+                <div class="bg-white rounded-lg shadow overflow-hidden">
+                    <table class="min-w-full">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fotoğraf</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ülke Adı</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            <% countries.forEach(country => { %>
+                                <tr>
+                                    <td class="px-6 py-4">
+                                        <% if (country.imageUrl) { %>
+                                            <img src="<%= country.imageUrl %>" alt="<%= country.name %>" class="h-24 w-32 object-cover rounded">
+                                        <% } else { %>
+                                            <div class="h-24 w-32 bg-gray-200 rounded flex items-center justify-center">
+                                                <span class="text-gray-500">Fotoğraf Yok</span>
+                                            </div>
+                                        <% } %>
+                                    </td>
+                                    <td class="px-6 py-4"><%= country.name %></td>
+                                    <td class="px-6 py-4">
+                                        <a href="/admin/edit-country/<%= country._id %>" class="text-indigo-600 hover:text-indigo-900 mr-4">
+                                            <i class="fas fa-edit"></i> Düzenle
+                                        </a>
+                                        <a href="/admin/delete-country/<%= country._id %>" class="text-red-600 hover:text-red-900" onclick="return confirm('Bu ülkeyi silmek istediğinize emin misiniz?')">
+                                            <i class="fas fa-trash"></i> Sil
+                                        </a>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
                 </div>
-                <div>
-                    <label for="cityDescription" class="block text-sm font-medium text-gray-700">Açıklama</label>
-                    <textarea id="cityDescription" name="description" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"></textarea>
+            </div>
+
+            <!-- Şehir Listesi -->
+            <div id="cityList" class="content-list hidden">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-2xl font-semibold">Şehirler</h2>
+                    <button onclick="toggleForm('addCityForm')" class="bg-yellow-600 text-white px-4 py-2 rounded-full hover:bg-yellow-700">
+                        <i class="fas fa-plus"></i> Yeni Şehir
+                    </button>
                 </div>
-                <button type="submit" class="bg-yellow-600 text-white rounded p-2">Ekle</button>
-            </form>
+                <div class="bg-white rounded-lg shadow overflow-hidden">
+                    <table class="min-w-full">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fotoğraf</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Şehir Adı</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ülke</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            <% cities.forEach(city => { %>
+                                <tr>
+                                    <td class="px-6 py-4">
+                                        <% if (city.imageUrl) { %>
+                                            <img src="<%= city.imageUrl %>" alt="<%= city.name %>" class="h-24 w-32 object-cover rounded">
+                                        <% } else { %>
+                                            <div class="h-24 w-32 bg-gray-200 rounded flex items-center justify-center">
+                                                <span class="text-gray-500">Fotoğraf Yok</span>
+                                            </div>
+                                        <% } %>
+                                    </td>
+                                    <td class="px-6 py-4"><%= city.name %></td>
+                                    <td class="px-6 py-4"><%= city.countryId ? city.countryId.name : 'Ülke Belirtilmemiş' %></td>
+                                    <td class="px-6 py-4">
+                                        <a href="/admin/edit-city/<%= city._id %>" class="text-indigo-600 hover:text-indigo-900 mr-4">
+                                            <i class="fas fa-edit"></i> Düzenle
+                                        </a>
+                                        <a href="/admin/delete-city/<%= city._id %>" class="text-red-600 hover:text-red-900" onclick="return confirm('Bu şehri silmek istediğinize emin misiniz?')">
+                                            <i class="fas fa-trash"></i> Sil
+                                        </a>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 </body>

@@ -75,11 +75,11 @@
                     <% cities.forEach(city => { %>
                         <a href="/sehir/<%= city.slug %>" class="group">
                             <div class="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow">
-                                <div class="relative pb-[66.67%]">
+                                <div class="relative h-[200px]">
                                     <img 
                                         src="/images/<%= city.slug %>.jpg"
                                         alt="<%= city.name %>" 
-                                        class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                                     >
                                     <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                                     <div class="absolute bottom-0 left-0 right-0 p-4">
