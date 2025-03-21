@@ -30,11 +30,13 @@ async function login(req, res) {
         if (user.password !== password) {
             return res.status(400).send('Şifre hatalı');
         }
+
+        // Session'a kullanıcı bilgilerini kaydet
         req.session.userId = user._id;
         req.session.role = user.role;
         req.session.username = user.username;
 
-        // Kullanıcı rolünü kontrol et ve yönlendir
+        // Kullanıcı rolüne göre yönlendir
         if (user.role === 'admin') {
             return res.redirect('/admin');
         } else {

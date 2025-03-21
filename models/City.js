@@ -33,27 +33,21 @@ const citySchema = new mongoose.Schema({
 }, { timestamps: true });
 
 // Slug oluşturma middleware
-citySchema.pre('save', async function(next) {
-    if ((this.isModified('name') || this.isModified('countryId')) && !this.isModified('slug')) {
-        try {
-            let baseSlug = slugify(this.name, {
-                lower: true,
-                strict: true,
-                locale: 'tr'
-            });
-            this.slug = `${baseSlug}-gezilecek-yerler`;
-            
-            // Eğer aynı slug varsa, sonuna numara ekle
-            let counter = 1;
-            while (await mongoose.models.City.findOne({ slug: this.slug, _id: { $ne: this._id } })) {
-                this.slug = `${baseSlug}-${counter}-gezilecek-yerler`;
-                counter++;
-            }
-        } catch (error) {
-            return next(error);
-        }
+citySchema.pre('save', function(next) {
+    if (!this.isModified('name')) {
+        return next();
     }
-    next();
+    
+    try {
+        this.slug = slugify(this.name, {
+            lower: true,
+            strict: true,
+            locale: 'tr'
+        });
+        next();
+    } catch (error) {
+        next(error);
+    }
 });
 
 // Güncelleme işlemlerinde de slug'ı otomatik oluştur
@@ -81,4 +75,6 @@ citySchema.pre('findOneAndUpdate', async function(next) {
     next();
 });
 
-module.exports = mongoose.model('City', citySchema);
+const City = mongoose.model('City', citySchema);
+
+module.exports = City;
