@@ -1,5 +1,6 @@
 // Admin yetkisi kontrolü middleware'i
 const ensureAdmin = (req, res, next) => {
+<<<<<<< HEAD
     console.log('Session durumu:', {
         session: req.session,
         userId: req.session?.userId,
@@ -7,6 +8,8 @@ const ensureAdmin = (req, res, next) => {
         isAuthenticated: !!req.session?.userId
     });
 
+=======
+>>>>>>> 76da1f5b4c100e2b49652cf707da52a9da980136
     // Önce oturum kontrolü
     if (!req.session || !req.session.userId) {
         console.log('Oturum bulunamadı:', req.session);

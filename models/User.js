@@ -15,6 +15,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+<<<<<<< HEAD
     role: {
         type: String,
         enum: ['user', 'admin'],
@@ -27,4 +28,12 @@ userSchema.methods.comparePassword = function(candidatePassword) {
     return this.password === candidatePassword;
 };
 
+=======
+    isAdmin: {
+        type: Boolean,
+        default: false
+    }
+}, { timestamps: true });
+
+>>>>>>> 76da1f5b4c100e2b49652cf707da52a9da980136
 module.exports = mongoose.model('User', userSchema);

@@ -23,6 +23,7 @@ async function register(req, res) {
 async function login(req, res) {
     const { email, password } = req.body;
     try {
+<<<<<<< HEAD
         console.log('Login attempt for:', email);
         const user = await User.findOne({ email });
         if (!user) {
@@ -40,6 +41,13 @@ async function login(req, res) {
         const isMatch = await user.comparePassword(password);
         if (!isMatch) {
             console.log('Password mismatch for user:', email);
+=======
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(400).send('Kullanıcı bulunamadı');
+        }
+        if (user.password !== password) {
+>>>>>>> 76da1f5b4c100e2b49652cf707da52a9da980136
             return res.status(400).send('Şifre hatalı');
         }
 
@@ -48,6 +56,7 @@ async function login(req, res) {
         req.session.role = user.role;
         req.session.username = user.username;
 
+<<<<<<< HEAD
         console.log('Session created:', {
             userId: req.session.userId,
             role: req.session.role,
@@ -64,6 +73,16 @@ async function login(req, res) {
         }
     } catch (err) {
         console.error('Login error:', err);
+=======
+        // Kullanıcı rolüne göre yönlendir
+        if (user.role === 'admin') {
+            return res.redirect('/admin');
+        } else {
+            return res.redirect('/');
+        }
+    } catch (err) {
+        console.error(err);
+>>>>>>> 76da1f5b4c100e2b49652cf707da52a9da980136
         res.status(500).send('Giriş sırasında bir hata oluştu: ' + err.message);
     }
 }

@@ -3,11 +3,18 @@ const router = express.Router();
 const User = require('../models/User');
 const Country = require('../models/Country');
 const City = require('../models/City');
+<<<<<<< HEAD
 const { ensureAdmin } = require('../middlewares/authMiddleware');
 
 // Basit kullanıcı bilgileri
 const adminCredentials = {
     email: 'yeldaozdmrr3434@gmail.com', // Burayı kendi e-posta adresinizle değiştirin
+=======
+
+// Basit kullanıcı bilgileri
+const adminCredentials = {
+    email: 'admin@example.com', // Burayı kendi e-posta adresinizle değiştirin
+>>>>>>> 76da1f5b4c100e2b49652cf707da52a9da980136
     password: 'yelda2306' // Burayı kendi şifrenizle değiştirin
 };
 
@@ -56,7 +63,11 @@ router.get('/admin', ensureAdmin, async (req, res) => {
 });
 
 // Ülke ekleme işlemi
+<<<<<<< HEAD
 router.post('/admin/add-country', ensureAdmin, async (req, res) => {
+=======
+router.post('/admin/add-country', async (req, res) => {
+>>>>>>> 76da1f5b4c100e2b49652cf707da52a9da980136
     const { name, description } = req.body;
     const country = new Country({ name, description });
     await country.save();
@@ -64,13 +75,28 @@ router.post('/admin/add-country', ensureAdmin, async (req, res) => {
 });
 
 // Şehir ekleme işlemi
+<<<<<<< HEAD
 router.post('/admin/add-city', ensureAdmin, async (req, res) => {
+=======
+router.post('/admin/add-city', async (req, res) => {
+>>>>>>> 76da1f5b4c100e2b49652cf707da52a9da980136
     const { name, countryId, description } = req.body;
     const city = new City({ name, countryId, description });
     await city.save();
     res.redirect('/admin');
 });
 
+<<<<<<< HEAD
+=======
+// Admin yetkilendirme middleware
+function ensureAdmin(req, res, next) {
+    if (req.session.user && req.session.user.role === 'admin') {
+        return next();
+    }
+    res.status(403).send('Bu sayfaya erişim izniniz yok.');
+}
+
+>>>>>>> 76da1f5b4c100e2b49652cf707da52a9da980136
 // Örnek: Şehir ekleme işlemi
 router.post('/admin/add-city', ensureAdmin, async (req, res) => {
     const { name, countryId, description } = req.body;
@@ -80,4 +106,8 @@ router.post('/admin/add-city', ensureAdmin, async (req, res) => {
     res.redirect('/admin');
 });
 
+<<<<<<< HEAD
 module.exports = router;
+=======
+module.exports = { ensureAdmin };
+>>>>>>> 76da1f5b4c100e2b49652cf707da52a9da980136

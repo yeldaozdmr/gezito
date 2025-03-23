@@ -119,3 +119,40 @@ process.on('SIGINT', async () => {
         process.exit(0);
     });
 });
+<<<<<<< HEAD
+=======
+
+// Giriş işlemi
+app.post('/login', async (req, res) => {
+    const { email, password } = req.body;
+
+    try {
+        const user = await User.findOne({ email });
+
+        if (!user) {
+            return res.status(401).send('Kullanıcı bulunamadı.');
+        }
+
+        const isMatch = await user.comparePassword(password);
+
+        if (!isMatch) {
+            return res.status(401).send('Yanlış şifre.');
+        }
+
+        // Kullanıcı oturumunu başlat
+        req.session.userId = user._id;
+        req.session.username = user.username;
+        req.session.role = user.role; // Kullanıcı rolünü oturuma kaydet
+
+        // Kullanıcı rolünü kontrol et ve yönlendir
+        if (user.role === 'admin') {
+            return res.redirect('/admin');
+        } else {
+            return res.redirect('/');
+        }
+    } catch (error) {
+        console.error('Giriş hatası:', error);
+        res.status(500).send('Bir hata oluştu.');
+    }
+});
+>>>>>>> 76da1f5b4c100e2b49652cf707da52a9da980136
