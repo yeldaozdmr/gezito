@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hata - Gezito</title>
+    <link rel="icon" href="/images/favicon.ico" type="image/x-icon">
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+</head>
+<body class="bg-gray-50">
+    <%- include('partials/header') %>
+
+    <main class="min-h-screen flex items-center justify-center">
+        <div class="text-center">
+            <h1 class="text-6xl font-bold text-gray-900 mb-4"><%= error.status %></h1>
+            <p class="text-xl text-gray-600 mb-8"><%= message %></p>
+            <a href="/" class="inline-block px-6 py-3 bg-yellow-400 text-black rounded-full hover:bg-yellow-500 transition-colors">
+                Ana Sayfaya Dön
+            </a>
+        </div>
+    </main>
+
+    <%- include('partials/footer') %>
+</body>
+</html> 

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ülke Düzenle</title>
+    <link rel="icon" href="/images/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.tiny.cloud/1/96dma7ctwc5lu5m0n71vfinzblada8qzrv9lqdnw7r5gagu8/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+    <script>
+        tinymce.init({
+            selector: 'textarea.editor',
+            height: 300,
+            language: 'tr',
+            menubar: 'file edit view insert format tools table help',
+            plugins: [
+                'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+                'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+                'insertdatetime', 'media', 'table', 'help', 'wordcount'
+            ],
+            toolbar: 'undo redo | formatselect | ' +
+                'bold italic backcolor | alignleft aligncenter ' +
+                'alignright alignjustify | bullist numlist outdent indent | ' +
+                'image media | help',
+            content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:16px }',
+            branding: false,
+            promotion: false,
+            automatic_uploads: true,
+            file_picker_types: 'image',
+            paste_data_images: true,
+            image_title: true,
+            image_caption: true,
+            image_dimensions: false,
+            image_class_list: [
+                {title: 'Responsive', value: 'img-fluid'}
+            ],
+            setup: function (editor) {
+                editor.on('change', function () {
+                    editor.save();
+                });
+            }
+        });
+    </script>
+</head>
+<body class="bg-gray-100">
+    <div class="flex min-h-screen">
+        <!-- Sol Menü - Sabit -->
+        <div class="fixed left-0 top-0 h-full w-64 bg-yellow-600 text-white p-6 overflow-y-auto">
+            <h1 class="text-2xl font-bold mb-8">Admin Paneli</h1>
+            <nav class="space-y-4">
+                <div>
+                    <a href="/admin#countryList" class="w-full text-left py-2 px-4 hover:bg-yellow-700 rounded block">
+                        <i class="fas fa-globe mr-2"></i>
+                        <span>Ülkeler</span>
+                    </a>
+                </div>
+                <div>
+                    <a href="/admin#cityList" class="w-full text-left py-2 px-4 hover:bg-yellow-700 rounded block">
+                        <i class="fas fa-city mr-2"></i>
+                        <span>Şehirler</span>
+                    </a>
+                </div>
+                <div class="absolute bottom-6 left-0 w-full px-6">
+                    <a href="/auth/logout" class="w-full flex items-center justify-center py-2 px-4 bg-red-500 hover:bg-red-600 rounded text-white transition-colors">
+                        <i class="fas fa-sign-out-alt mr-2"></i>
+                        Çıkış Yap
+                    </a>
+                </div>
+            </nav>
+        </div>
+
+        <!-- Ana İçerik - Sol menüyü dikkate alarak margin ekle -->
+        <div class="flex-1 ml-64 p-8">
+            <div class="max-w-2xl mx-auto bg-white p-6 rounded-lg shadow-md">
+                <h1 class="text-3xl font-bold mb-6">Ülke Düzenle</h1>
+                
+                <form action="/admin/edit-country/<%= country._id %>" method="POST" enctype="multipart/form-data" class="space-y-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Ülke Adı</label>
+                        <input type="text" name="name" value="<%= country.name %>" required 
+                               class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-yellow-500 focus:border-yellow-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Slug (URL)</label>
+                        <input type="text" name="slug" value="<%= country.slug %>" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md">
+                        <p class="mt-1 text-sm text-gray-500">Örnek format: ulke-adi-gezilecek-yerler</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Açıklama</label>
+                        <textarea name="description" class="editor mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-yellow-500 focus:border-yellow-500"><%= country.description %></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Mevcut Fotoğraf</label>
+                        <% if (country.imageUrl) { %>
+                            <img src="/images/<%= country.slug %>.jpg" alt="<%= country.name %>" class="mt-2 h-32 w-auto">
+                        <% } else { %>
+                            <p class="mt-2 text-gray-500">Fotoğraf yok</p>
+                        <% } %>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Yeni Fotoğraf</label>
+                        <input type="file" name="image" accept="image/*" 
+                               class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-yellow-500 focus:border-yellow-500">
+                        <p class="mt-1 text-sm text-gray-500">Yeni bir fotoğraf yüklemezseniz mevcut fotoğraf korunacaktır.</p>
+                    </div>
+
+                    <div class="flex justify-between">
+                        <button type="submit" class="bg-yellow-600 text-white px-4 py-2 rounded-md hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2">
+                            Kaydet
+                        </button>
+                        <a href="/admin" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
+                            İptal
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 
