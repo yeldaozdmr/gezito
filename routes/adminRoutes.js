@@ -6,6 +6,8 @@ const fs = require('fs');
 const { ensureAdmin } = require('../middlewares/authMiddleware');
 const Country = require('../models/Country');
 const City = require('../models/City');
+const User = require('../models/User');
+const Comment = require('../models/Comment');
 
 // Multer konfigürasyonu
 const storage = multer.diskStorage({
@@ -41,9 +43,27 @@ const upload = multer({
 // Admin panelini render et
 router.get('/admin', ensureAdmin, async (req, res) => {
     try {
+        // Tüm verileri çek
         const countries = await Country.find().sort({ name: 1 });
         const cities = await City.find().populate('countryId').sort({ name: 1 });
-        res.render('admin', { countries, cities });
+        const users = await User.find().sort({ createdAt: -1 });
+        const comments = await Comment.find().populate('userId', 'username').sort({ createdAt: -1 });
+
+        // Resim URL'lerini ayarla
+        countries.forEach(country => {
+            country.imageUrl = `/images/${country.slug}.jpg`;
+        });
+        
+        cities.forEach(city => {
+            city.imageUrl = `/images/${city.slug}.jpg`;
+        });
+
+        res.render('admin', { 
+            countries, 
+            cities, 
+            users: users || [], 
+            comments: comments || []
+        });
     } catch (error) {
         console.error('Admin panel hatası:', error);
         res.status(500).send('Bir hata oluştu');
@@ -201,6 +221,30 @@ router.get('/admin/delete-city/:id', ensureAdmin, async (req, res) => {
         res.redirect('/admin#cityList');
     } catch (error) {
         res.status(500).send('Şehir silinirken bir hata oluştu');
+    }
+});
+
+// Kullanıcı silme işlemi
+router.get('/admin/delete-user/:id', ensureAdmin, async (req, res) => {
+    try {
+        await User.findByIdAndDelete(req.params.id);
+        // Kullanıcının yorumlarını da sil
+        await Comment.deleteMany({ userId: req.params.id });
+        res.redirect('/admin#userList');
+    } catch (error) {
+        console.error('Kullanıcı silme hatası:', error);
+        res.status(500).send('Kullanıcı silinirken bir hata oluştu');
+    }
+});
+
+// Yorum silme işlemi
+router.get('/admin/delete-comment/:id', ensureAdmin, async (req, res) => {
+    try {
+        await Comment.findByIdAndDelete(req.params.id);
+        res.redirect('/admin#commentList');
+    } catch (error) {
+        console.error('Yorum silme hatası:', error);
+        res.status(500).send('Yorum silinirken bir hata oluştu');
     }
 });
 
