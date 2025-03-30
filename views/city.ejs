@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= city.name %> - Şehir Detayları</title>
+    <link rel="icon" href="/images/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+</head>
+<body class="bg-gray-100">
+    <%- include('partials/header') %>
+
+    <div class="max-w-4xl mx-auto px-4 py-16">
+
+        <img src="/images/<%= city.slug %>.jpg" alt="<%= city.name %>" class="w-full h-48 object-cover rounded-t-lg">
+        <h1 class="text-4xl font-bold mb-4"><%= city.name %></h1>
+        <p class="mb-4"><%- city.description %></p>
+        <br>
+        <!-- Meşhur Yemekler Bölümü -->
+        <% if (city.famousDishes && city.famousDishes.length > 0) { %>
+            <h2 class="text-2xl font-bold mb-4">Bölgenin Meşhur Yemekleri</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                <% city.famousDishes.forEach(dish => { %>
+                    <div class="flex flex-col items-center p-4 bg-white rounded-lg shadow-md">
+                        <img src="<%= dish.imageUrl %>" alt="<%= dish.name %>" class="w-3/4 h-32 object-cover rounded mb-2">
+                        <p class="text-center font-semibold"><%= dish.name %></p>
+                    </div>
+                <% }); %>
+            </div>
+        <% } else { %>
+            <p>Bu şehirdeki meşhur yemekler listesi boş.</p>
+        <% } %>
+            <br>
+        <!-- Yorum Yapma Bölümü -->
+        <div class="mt-8">
+            <h3 class="text-xl font-semibold">Yorum Yap</h3>
+            <% if (user) { %>
+                <form action="/comments" method="POST">
+                    <textarea name="content" required placeholder="Yorumunuzu buraya yazın..." class="border rounded p-2 w-full"></textarea>
+                    <input type="hidden" name="citySlug" value="<%= city.slug %>">
+                    <button type="submit" class="bg-yellow-600 text-white rounded p-2 mt-2">Yorum Gönder</button>
+                </form>
+            <% } else { %>
+                <p>Yorum yapabilmek için <a href="/giris">giriş yapınız</a>.</p>
+            <% } %>
+        </div>
+
+        <% comments.forEach(comment => { %>
+            <div class="border p-2 mb-2">
+                <strong><%= comment.userId.username %></strong>: <%= comment.content %>
+            </div>
+        <% }) %>
+
+    </div>
+
+    <%- include('partials/footer') %>
+</body>
+</html>

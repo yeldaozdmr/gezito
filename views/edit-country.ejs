@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ülke Düzenle - Admin Paneli</title>
+    <link rel="icon" href="/images/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://cdn.tiny.cloud/1/96dma7ctwc5lu5m0n71vfinzblada8qzrv9lqdnw7r5gagu8/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+    <script>
+        tinymce.init({
+            selector: '#description',
+            plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
+            toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
+            height: 300,
+            language: 'tr',
+            images_upload_url: '/admin/upload-image',
+            images_upload_handler: function (blobInfo, success, failure) {
+                var xhr, formData;
+                xhr = new XMLHttpRequest();
+                xhr.withCredentials = false;
+                xhr.open('POST', '/admin/upload-image');
+                xhr.onload = function() {
+                    var json;
+                    if (xhr.status != 200) {
+                        failure('HTTP Error: ' + xhr.status);
+                        return;
+                    }
+                    json = JSON.parse(xhr.responseText);
+                    if (!json || typeof json.location != 'string') {
+                        failure('Invalid JSON: ' + xhr.responseText);
+                        return;
+                    }
+                    success(json.location);
+                };
+                formData = new FormData();
+                formData.append('file', blobInfo.blob(), blobInfo.filename());
+                xhr.send(formData);
+            }
+        });
+    </script>
+</head>
+<body class="bg-gray-100">
+    <div class="flex min-h-screen">
+        <!-- Sol Menü - Sabit -->
+        <div class="fixed left-0 top-0 h-full w-64 bg-yellow-600 text-white p-6 overflow-y-auto">
+            <h1 class="text-2xl font-bold mb-8">Admin Paneli</h1>
+            <nav class="space-y-4">
+                <div>
+                    <a href="/admin/home" class="w-full text-left py-2 px-4 hover:bg-yellow-700 rounded block">
+                        <i class="fas fa-home mr-2"></i>
+                        <span>Ana Sayfa</span>
+                    </a>
+                </div>
+                <div>
+                    <a href="/admin/users" class="w-full text-left py-2 px-4 hover:bg-yellow-700 rounded block">
+                        <i class="fas fa-users mr-2"></i>
+                        <span>Kullanıcılar</span>
+                    </a>
+                </div>
+                <div>
+                    <a href="/admin/comments" class="w-full text-left py-2 px-4 hover:bg-yellow-700 rounded block">
+                        <i class="fas fa-comments mr-2"></i>
+                        <span>Yorumlar</span>
+                    </a>
+                </div>
+                <div>
+                    <a href="/admin/countries" class="w-full text-left py-2 px-4 hover:bg-yellow-700 rounded block">
+                        <i class="fas fa-globe mr-2"></i>
+                        <span>Ülkeler</span>
+                    </a>
+                </div>
+                <div>
+                    <a href="/admin/cities" class="w-full text-left py-2 px-4 hover:bg-yellow-700 rounded block">
+                        <i class="fas fa-city mr-2"></i>
+                        <span>Şehirler</span>
+                    </a>
+                </div>
+                <div class="absolute bottom-6 left-0 w-full px-6">
+                    <a href="/auth/logout" class="w-full flex items-center justify-center py-2 px-4 bg-red-500 hover:bg-red-600 rounded text-white transition-colors">
+                        <i class="fas fa-sign-out-alt mr-2"></i>
+                        Çıkış Yap
+                    </a>
+                </div>
+            </nav>
+        </div>
+
+        <!-- Ana İçerik - Sol menüyü dikkate alarak margin ekle -->
+        <div class="flex-1 ml-64 p-8">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-2xl font-semibold mb-6">Ülke Düzenle</h2>
+                <form action="/admin/edit-country/<%= country._id %>" method="POST" enctype="multipart/form-data" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Ülke Adı</label>
+                        <input type="text" name="name" value="<%= country.name %>" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Slug</label>
+                        <input type="text" name="slug" value="<%= country.slug %>" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Açıklama</label>
+                        <textarea id="description" name="description" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"><%= country.description %></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Mevcut Fotoğraf</label>
+                        <% if (country.imageUrl) { %>
+                            <img src="/images/<%= country.slug %>.jpg" alt="<%= country.name %>" class="mt-2 h-32 w-40 object-cover rounded">
+                        <% } else { %>
+                            <p class="mt-2 text-gray-500">Fotoğraf yok</p>
+                        <% } %>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Yeni Fotoğraf (Opsiyonel)</label>
+                        <input type="file" name="image" accept="image/*" class="mt-1 block w-full">
+                    </div>
+                    <div class="flex justify-end space-x-4">
+                        <a href="/admin/countryList" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">
+                            İptal
+                        </a>
+                        <button type="submit" class="px-4 py-2 bg-yellow-600 text-white rounded-md hover:bg-yellow-700">
+                            Kaydet
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

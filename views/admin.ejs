@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Paneli</title>
+    <link rel="icon" href="/images/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.tiny.cloud/1/96dma7ctwc5lu5m0n71vfinzblada8qzrv9lqdnw7r5gagu8/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+    <script>
+        tinymce.init({
+            selector: "textarea.editor",
+            plugins: 'advlist autolink lists link image charmap print preview anchor',
+            toolbar: 'undo redo | formatselect | bold italic | alignleft aligncenter alignright | bullist numlist outdent indent | link image'
+        });
+
+        function toggleForm(formId) {
+            const forms = document.querySelectorAll('.content-form');
+            forms.forEach(form => form.classList.add('hidden'));
+            document.getElementById(formId).classList.remove('hidden');
+        }
+
+        function showList(listId) {
+            const lists = document.querySelectorAll('.content-list, .content-dashboard, .content-form');
+            lists.forEach(list => list.classList.add('hidden'));
+            document.getElementById(listId).classList.remove('hidden');
+        }
+
+        // Sayfa yüklendiğinde dashboard'ı göster
+        window.onload = function() {
+            showList('dashboard');
+        }
+    </script>
+</head>
+<body class="bg-gray-100">
+    <div class="flex min-h-screen">
+        <!-- Sol Menü - Sabit -->
+        <div class="fixed left-0 top-0 h-full w-64 bg-yellow-600 text-white p-6 overflow-y-auto">
+            <h1 class="text-2xl font-bold mb-8">Admin Paneli</h1>
+            <nav class="space-y-4">
+                <div>
+                    <button onclick="showList('dashboard')" class="w-full text-left py-2 px-4 hover:bg-yellow-700 rounded">
+                        <i class="fas fa-home mr-2"></i>
+                        <span>Ana Sayfa</span>
+                    </button>
+                </div>
+                <div>
+                    <button onclick="showList('userList')" class="w-full text-left py-2 px-4 hover:bg-yellow-700 rounded">
+                        <i class="fas fa-users mr-2"></i>
+                        <span>Kullanıcılar</span>
+                    </button>
+                </div>
+                <div>
+                    <button onclick="showList('commentList')" class="w-full text-left py-2 px-4 hover:bg-yellow-700 rounded">
+                        <i class="fas fa-comments mr-2"></i>
+                        <span>Yorumlar</span>
+                    </button>
+                </div>
+                <div>
+                    <button onclick="showList('countryList')" class="w-full text-left py-2 px-4 hover:bg-yellow-700 rounded">
+                        <i class="fas fa-globe mr-2"></i>
+                        <span>Ülkeler</span>
+                    </button>
+                </div>
+                <div>
+                    <button onclick="showList('cityList')" class="w-full text-left py-2 px-4 hover:bg-yellow-700 rounded">
+                        <i class="fas fa-city mr-2"></i>
+                        <span>Şehirler</span>
+                    </button>
+                </div>
+                <div class="absolute bottom-6 left-0 w-full px-6">
+                    <a href="/auth/logout" class="w-full flex items-center justify-center py-2 px-4 bg-red-500 hover:bg-red-600 rounded text-white transition-colors">
+                        <i class="fas fa-sign-out-alt mr-2"></i>
+                        Çıkış Yap
+                    </a>
+                </div>
+            </nav>
+        </div>
+
+        <!-- Ana İçerik - Sol menüyü dikkate alarak margin ekle -->
+        <div class="flex-1 ml-64 p-8">
+            <!-- Dashboard -->
+            <div id="dashboard" class="content-dashboard">
+                <h2 class="text-2xl font-semibold mb-6">Hoş Geldiniz!</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- Kullanıcı Sayısı -->
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-blue-100 text-blue-500">
+                                <i class="fas fa-users text-2xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm text-gray-500">Kullanıcılar</p>
+                                <p class="text-lg font-semibold"><%= users.length %> kullanıcı</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Yorum Sayısı -->
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-green-100 text-green-500">
+                                <i class="fas fa-comments text-2xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm text-gray-500">Yorumlar</p>
+                                <p class="text-lg font-semibold"><%= comments.length %> yorum</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Ülke Sayısı -->
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-yellow-100 text-yellow-500">
+                                <i class="fas fa-globe text-2xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm text-gray-500">Ülkeler</p>
+                                <p class="text-lg font-semibold"><%= countries.length %> ülke</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Şehir Sayısı -->
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-purple-100 text-purple-500">
+                                <i class="fas fa-city text-2xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm text-gray-500">Şehirler</p>
+                                <p class="text-lg font-semibold"><%= cities.length %> şehir</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Kullanıcılar Listesi -->
+            <div id="userList" class="content-list hidden">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-2xl font-semibold">Kullanıcılar</h2>
+                </div>
+                <div class="bg-white rounded-lg shadow overflow-hidden">
+                    <table class="min-w-full">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kullanıcı Adı</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kayıt Tarihi</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            <% users.forEach(user => { %>
+                                <tr>
+                                    <td class="px-6 py-4"><%= user.username %></td>
+                                    <td class="px-6 py-4"><%= user.email %></td>
+                                    <td class="px-6 py-4"><%= new Date(user.createdAt).toLocaleDateString('tr-TR') %></td>
+                                    <td class="px-6 py-4">
+                                        <a href="/admin/delete-user/<%= user._id %>" class="text-red-600 hover:text-red-900" onclick="return confirm('Bu kullanıcıyı silmek istediğinize emin misiniz?')">
+                                            <i class="fas fa-trash"></i> Sil
+                                        </a>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Yorumlar Listesi -->
+            <div id="commentList" class="content-list hidden">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-2xl font-semibold">Yorumlar</h2>
+                </div>
+                <div class="bg-white rounded-lg shadow overflow-hidden">
+                    <table class="min-w-full">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kullanıcı</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Yorum</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tarih</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            <% comments.forEach(comment => { %>
+                                <tr>
+                                    <td class="px-6 py-4"><%= comment.userId ? comment.userId.username : 'Silinmiş Kullanıcı' %></td>
+                                    <td class="px-6 py-4"><%= comment.content %></td>
+                                    <td class="px-6 py-4"><%= new Date(comment.createdAt).toLocaleDateString('tr-TR') %></td>
+                                    <td class="px-6 py-4">
+                                        <a href="/admin/delete-comment/<%= comment._id %>" class="text-red-600 hover:text-red-900" onclick="return confirm('Bu yorumu silmek istediğinize emin misiniz?')">
+                                            <i class="fas fa-trash"></i> Sil
+                                        </a>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Ülke Ekleme Formu -->
+            <div id="addCountryForm" class="content-form hidden bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-2xl font-semibold mb-4">Ülke Ekle</h2>
+                <form action="/admin/add-country" method="POST" enctype="multipart/form-data" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Ülke Adı</label>
+                        <input type="text" name="name" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Açıklama</label>
+                        <textarea name="description" class="editor mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Fotoğraf</label>
+                        <input type="file" name="image" accept="image/*" class="mt-1 block w-full">
+                    </div>
+                    <button type="submit" class="bg-yellow-600 text-white px-4 py-2 rounded hover:bg-yellow-700">Ekle</button>
+                </form>
+            </div>
+
+            <!-- Ülke Listesi -->
+            <div id="countryList" class="content-list hidden">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-2xl font-semibold">Ülkeler</h2>
+                    <button onclick="toggleForm('addCountryForm')" class="bg-yellow-600 text-white px-4 py-2 rounded-full hover:bg-yellow-700">
+                        <i class="fas fa-plus"></i> Yeni Ülke
+                    </button>
+                </div>
+                <div class="bg-white rounded-lg shadow overflow-hidden">
+                    <table class="min-w-full">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fotoğraf</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ülke Adı</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            <% countries.forEach(country => { %>
+                                <tr>
+                                    <td class="px-6 py-4">
+                                        <% if (country.imageUrl) { %>
+                                            <img src="/images/<%= country.slug %>.jpg" alt="<%= country.name %>" class="h-24 w-32 object-cover rounded">
+                                        <% } else { %>
+                                            <div class="h-24 w-32 bg-gray-200 rounded flex items-center justify-center">
+                                                <span class="text-gray-500">Fotoğraf Yok</span>
+                                            </div>
+                                        <% } %>
+                                    </td>
+                                    <td class="px-6 py-4"><%= country.name %></td>
+                                    <td class="px-6 py-4">
+                                        <a href="/admin/edit-country/<%= country._id %>" class="text-indigo-600 hover:text-indigo-900 mr-4">
+                                            <i class="fas fa-edit"></i> Düzenle
+                                        </a>
+                                        <a href="/admin/delete-country/<%= country._id %>" class="text-red-600 hover:text-red-900" onclick="return confirm('Bu ülkeyi silmek istediğinize emin misiniz?')">
+                                            <i class="fas fa-trash"></i> Sil
+                                        </a>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Şehir Ekleme Formu -->
+            <div id="addCityForm" class="content-form hidden bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-2xl font-semibold mb-4">Şehir Ekle</h2>
+                <form action="/admin/add-city" method="POST" enctype="multipart/form-data" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Şehir Adı</label>
+                        <input type="text" name="name" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Ülke</label>
+                        <select name="countryId" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md">
+                            <% countries.forEach(country => { %>
+                                <option value="<%= country._id %>"><%= country.name %></option>
+                            <% }) %>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Açıklama</label>
+                        <textarea name="description" class="editor mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Fotoğraf</label>
+                        <input type="file" name="image" accept="image/*" class="mt-1 block w-full">
+                    </div>
+                    <button type="submit" class="bg-yellow-600 text-white px-4 py-2 rounded hover:bg-yellow-700">Ekle</button>
+                </form>
+            </div>
+
+            <!-- Şehir Listesi -->
+            <div id="cityList" class="content-list hidden">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-2xl font-semibold">Şehirler</h2>
+                    <button onclick="toggleForm('addCityForm')" class="bg-yellow-600 text-white px-4 py-2 rounded-full hover:bg-yellow-700">
+                        <i class="fas fa-plus"></i> Yeni Şehir
+                    </button>
+                </div>
+                <div class="bg-white rounded-lg shadow overflow-hidden">
+                    <table class="min-w-full">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fotoğraf</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Şehir Adı</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ülke</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            <% cities.forEach(city => { %>
+                                <tr>
+                                    <td class="px-6 py-4">
+                                        <% if (city.imageUrl) { %>
+                                            <img src="/images/<%= city.slug %>.jpg" alt="<%= city.name %>" class="h-24 w-32 object-cover rounded">
+                                        <% } else { %>
+                                            <div class="h-24 w-32 bg-gray-200 rounded flex items-center justify-center">
+                                                <span class="text-gray-500">Fotoğraf Yok</span>
+                                            </div>
+                                        <% } %>
+                                    </td>
+                                    <td class="px-6 py-4"><%= city.name %></td>
+                                    <td class="px-6 py-4"><%= city.countryId ? city.countryId.name : 'Ülke Belirtilmemiş' %></td>
+                                    <td class="px-6 py-4">
+                                        <a href="/admin/edit-city/<%= city._id %>" class="text-indigo-600 hover:text-indigo-900 mr-4">
+                                            <i class="fas fa-edit"></i> Düzenle
+                                        </a>
+                                        <a href="/admin/delete-city/<%= city._id %>" class="text-red-600 hover:text-red-900" onclick="return confirm('Bu şehri silmek istediğinize emin misiniz?')">
+                                            <i class="fas fa-trash"></i> Sil
+                                        </a>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

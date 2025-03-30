@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gezito</title>
+    <link rel="icon" href="/images/favicon.ico" type="image/x-icon">
+    <!-- Swiper CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
+    <!-- Swiper JS -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+    
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-W9RRLE5Q83"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-W9RRLE5Q83');
+    </script>
+</head>
+<body>
+<header class="bg-white shadow-sm">
+    <div class="container mx-auto px-4">
+        <div class="flex items-center justify-between h-16">
+            <!-- Logo -->
+            <a href="/" class="flex items-center -my-6">
+                <img 
+                    src="/images/logo.png"
+                    alt="Gezito Logo" 
+                    class="h-20 w-auto"
+                />
+            </a>
+
+            <!-- Hamburger Menü -->
+            <div class="md:hidden">
+                <button id="menuButton" class="text-gray-600 hover:text-yellow-600 focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Navigation -->
+            <nav id="navMenu" class="hidden md:flex space-x-8">
+                <a href="/" class="text-gray-600 hover:text-yellow-600 font-light text-base tracking-wider uppercase">Anasayfa</a>
+                <a href="/ulkeler" class="text-gray-600 hover:text-yellow-600 font-light text-base tracking-wider uppercase">Ülkeler</a>
+                <a href="/sehirler" class="text-gray-600 hover:text-yellow-600 font-light text-base tracking-wider uppercase">Şehirler</a>
+                <a href="/iletisim" class="text-gray-600 hover:text-yellow-600 font-light text-base tracking-wider uppercase">İletişim</a>
+            </nav>
+
+            <!-- Arama Çubuğu -->
+           
+            <!-- Giriş -->
+            <div class="w-48 flex justify-end">
+                <nav class="p-4">
+                    <div class="container mx-auto flex justify-between items-center">
+                        <div class="flex items-center relative">
+                            <% if (user) { %>
+                                <div class="relative">
+                                    <span class="text-black mr-4 cursor-pointer hover:text-yellow-600" id="username" onclick="toggleDropdown(event)">
+                                         <%= user.username %>
+                                    </span>
+                                    <div id="dropdownMenu" class="absolute hidden bg-white shadow-lg rounded-md mt-2 z-10">
+                                        <a href="/auth/logout" class="block px-4 py-2 text-black hover:bg-yellow-600 hover:text-white">Çıkış Yap</a>
+                                    </div>
+                                </div>
+                            <% } else { %>
+                                <a href="/giris" class="text-black hover:text-yellow-600 font-light text-base tracking-wider uppercase">Giriş Yap</a>
+                            <% } %>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const dropdown = document.getElementById('dropdownMenu');
+
+        document.addEventListener('click', () => {
+            if (dropdown) {
+                dropdown.classList.add('hidden');
+            }
+        });
+    });
+
+    function toggleDropdown(event) {
+        event.stopPropagation();
+        const dropdown = document.getElementById('dropdownMenu');
+        if (dropdown) {
+            dropdown.classList.toggle('hidden');
+        }
+    };
+
+    // Dropdown bağlantılarına tıklama işlevi
+    document.querySelectorAll('#regionDropdown a').forEach(link => {
+        link.addEventListener('click', (event) => {
+            event.stopPropagation(); // Dropdown'un kapanmasını engelle
+            const url = link.getAttribute('href'); // Bağlantının URL'sini al
+            window.location.href = url; // Sayfayı yeni URL'ye yönlendir
+        });
+    });
+
+    // Hamburger menü açma/kapama
+    const menuButton = document.getElementById('menuButton');
+    const navMenu = document.getElementById('navMenu');
+
+    menuButton.addEventListener('click', () => {
+        navMenu.classList.toggle('hidden');
+    });
+</script>
+
+</body>
+</html>

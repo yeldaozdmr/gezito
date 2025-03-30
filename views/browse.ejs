@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> - Gezito</title>
+    <link rel="icon" href="/images/favicon.ico" type="image/x-icon">
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+</head>
+<body class="bg-gray-50">
+    <%- include('partials/header') %>
+
+    <main class="container mx-auto px-4 py-8">
+        <% if (type === 'continent') { %>
+            <!-- Kıtalar Görünümü -->
+            <h1 class="text-3xl font-bold text-gray-900 mb-8">Kıtalar</h1>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <% continents.forEach(continent => { %>
+                    <a href="/bolge/<%= continent.slug %>" class="group">
+                        <div class="relative rounded-lg overflow-hidden shadow-md">
+                            <img src="<%= continent.imageUrl %>" alt="<%= continent.name %>" class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                            <div class="absolute bottom-0 left-0 right-0 p-4">
+                                <h3 class="text-xl font-semibold text-white"><%= continent.name %></h3>
+                                <p class="text-sm text-gray-200 mt-1"><%= continent.countryCount %> ülke</p>
+                            </div>
+                        </div>
+                    </a>
+                <% }) %>
+            </div>
+
+        <% } else if (type === 'country') { %>
+            <!-- Ülkeler Görünümü -->
+            <div class="container mx-auto px-4 py-8">
+                <!-- Filtreleme Seçenekleri -->
+                <div class="flex items-center justify-between mb-8">
+                    <div class="flex space-x-4">
+                        <button 
+                            id="sortByAlphabet" 
+                            class="px-6 py-2 rounded-full text-sm font-medium transition-colors border-2 bg-yellow-400 border-yellow-400 text-black"
+                        >
+                            A'dan Z'ye Göster
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Alfabetik Görünüm -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                    <% countries.sort((a, b) => a.name.localeCompare(b.name, 'tr')).forEach(country => { %>
+                        <a href="/ulke/<%= country.slug %>" class="group">
+                            <div class="relative h-[200px] rounded-lg overflow-hidden">
+                                <img 
+                                    src="/images/<%= country.slug %>.jpg"
+                                    alt="<%= country.name %>" 
+                                    class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                                >
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                                <div class="absolute bottom-0 left-0 right-0 p-4">
+                                    <h3 class="text-xl font-semibold text-white"><%= country.name %></h3>
+                                </div>
+                            </div>
+                        </a>
+                    <% }) %>
+                </div>
+            </div>
+
+        <% } else if (type === 'city') { %>
+            <!-- Şehirler Görünümü -->
+            <div class="container mx-auto px-4 py-8">
+                <h1 class="text-3xl font-bold text-gray-900 mb-8">Şehirler</h1>
+
+                <!-- Şehirler Grid -->
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-8">
+                    <% cities.forEach(city => { %>
+                        <a href="/sehir/<%= city.slug %>" class="group">
+                            <div class="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+                                <div class="relative h-[200px]">
+                                    <img 
+                                        src="/images/<%= city.slug %>.jpg"
+                                        alt="<%= city.name %>" 
+                                        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                    >
+                                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                                    <div class="absolute bottom-0 left-0 right-0 p-4">
+                                        <h3 class="text-lg font-medium text-white"><%= city.name %></h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    <% }) %>
+                </div>
+
+                <!-- Pagination -->
+                <div class="flex justify-center items-center space-x-4 mt-8">
+                    <% if (hasPrevPage) { %>
+                        <a 
+                            href="?page=<%= currentPage - 1 %>" 
+                            class="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors"
+                        >
+                            Önceki
+                        </a>
+                    <% } %>
+
+                    <span class="text-gray-600">
+                        Sayfa <%= currentPage %> / <%= totalPages %>
+                    </span>
+
+                    <% if (hasNextPage) { %>
+                        <a 
+                            href="?page=<%= currentPage + 1 %>" 
+                            class="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors"
+                        >
+                            Sonraki
+                        </a>
+                    <% } %>
+                </div>
+            </div>
+        <% } else { %>
+            <!-- Şehirler Görünümü -->
+            <h1 class="text-3xl font-bold text-gray-900 mb-8">Şehirler</h1>
+            
+            <% regions.forEach(region => { %>
+                <div class="mb-12">
+                    <h2 class="text-2xl font-semibold text-gray-800 mb-6"><%= region.name %></h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                        <% region.cities.forEach(city => { %>
+                            <a href="/sehir/<%= city.slug %>" class="group">
+                                <div class="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+                                    <div class="relative pb-[66.67%]">
+                                        <img 
+                                            src="<%= city.imageUrl %>" 
+                                            alt="<%= city.name %>" 
+                                            class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                        >
+                                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                                        <div class="absolute bottom-0 left-0 right-0 p-4">
+                                            <h3 class="text-lg font-medium text-white"><%= city.name %></h3>
+                                            <p class="text-sm text-gray-200"><%= city.region %></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        <% }) %>
+                    </div>
+                </div>
+            <% }) %>
+        <% } %>
+    </main>
+
+    <%- include('partials/footer') %>
+
+    <script>
+    // Sıralama değiştirme fonksiyonu
+    function changeSortMethod(method) {
+        const currentUrl = new URL(window.location.href);
+        currentUrl.searchParams.set('sort', method);
+        window.location.href = currentUrl.toString();
+    }
+    </script>
+</body>
+</html> 

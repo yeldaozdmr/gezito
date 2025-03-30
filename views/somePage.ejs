@@ -1,0 +1,14 @@
+<% if (user) { %>
+    <form action="/comments" method="POST">
+        <textarea name="content" required placeholder="Yorumunuzu buraya yazın..." class="border rounded p-2 w-full"></textarea>
+        <button type="submit" class="bg-yellow-600 text-white rounded p-2 mt-2">Yorum Gönder</button>
+    </form>
+<% } else { %>
+    <p>Yorum yapabilmek için <a href="/giris">giriş yapınız</a>.</p>
+<% } %>
+
+<% comments.forEach(comment => { %>
+    <div class="border p-2 mb-2">
+        <strong><%= comment.userId.username %></strong>: <%= comment.content %>
+    </div>
+<% }) %> 

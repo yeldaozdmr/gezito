@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= country.name %> Detayları </title>
+    <link rel="icon" href="/images/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    
+</head>
+<body class="bg-gray-100">
+    <%- include('partials/header') %>
+
+    <div class="max-w-4xl mx-auto px-4 py-16">
+        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+            <img src="/images/<%= country.slug %>.jpg" alt="<%= country.name %>" class="w-full h-48 object-cover rounded-t-lg">
+            <div class="p-4">
+                <h1 class="text-3xl font-bold text-gray-900"><%= country.name %></h1>
+                <p class="text-gray-600 mt-2"><%- country.description %></p>
+                
+                <!-- Öne Çıkan Yerler -->
+              
+                
+
+                <!-- Yorum Yapma Bölümü -->
+                <div class="mt-8">
+                    <h3 class="text-xl font-semibold">Yorum Yap</h3>
+                    <% if (user) { %>
+                        <form action="/comments" method="POST">
+                            <textarea name="content" required placeholder="Yorumunuzu buraya yazın..." class="border rounded p-2 w-full"></textarea>
+                            <input type="hidden" name="countryId" value="<%= country._id %>">
+                            <button type="submit" class="bg-yellow-600 text-white rounded p-2 mt-2">Yorum Gönder</button>
+                        </form>
+                    <% } else { %>
+                        <p>Yorum yapabilmek için <a href="/giris">giriş yapınız</a>.</p>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <% comments.forEach(comment => { %>
+        <div class="border p-2 mb-2">
+            <strong><%= comment.userId.username %></strong>: <%= comment.content %>
+        </div>
+    <% }) %>
+
+    <%- include('partials/footer') %>
+</body>
+</html>
