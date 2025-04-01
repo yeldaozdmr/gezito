@@ -1,5 +1,5 @@
 // Admin yetkisi kontrolü middleware'i
-const ensureAdmin = (req, res, next) => {
+const requireAdmin = (req, res, next) => {
     console.log('Session durumu:', {
         session: req.session,
         userId: req.session?.userId,
@@ -36,6 +36,6 @@ const ensureAuth = (req, res, next) => {
 };
 
 module.exports = {
-    ensureAdmin,
+    requireAdmin,
     ensureAuth
 };

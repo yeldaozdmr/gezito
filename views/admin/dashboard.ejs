@@ -1,0 +1,65 @@
+<%- include('../partials/admin/_header') %>
+<body class="bg-gray-100">
+    <div class="flex min-h-screen">
+        <%- include('../partials/admin/_navbar') %>
+        
+        <!-- Ana İçerik -->
+        <div class="flex-1 ml-64 p-8">
+            <!-- Dashboard -->
+            <div id="dashboard" class="content-dashboard">
+                <h2 class="text-2xl font-semibold mb-6">Hoş Geldiniz!</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- Kullanıcı Sayısı -->
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-blue-100 text-blue-500">
+                                <i class="fas fa-users text-2xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm text-gray-500">Kullanıcılar</p>
+                                <p class="text-lg font-semibold"><%= users.length %> kullanıcı</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Yorum Sayısı -->
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-green-100 text-green-500">
+                                <i class="fas fa-comments text-2xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm text-gray-500">Yorumlar</p>
+                                <p class="text-lg font-semibold"><%= comments.length %> yorum</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Ülke Sayısı -->
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-yellow-100 text-yellow-500">
+                                <i class="fas fa-globe text-2xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm text-gray-500">Ülkeler</p>
+                                <p class="text-lg font-semibold"><%= countries.length %> ülke</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Şehir Sayısı -->
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-purple-100 text-purple-500">
+                                <i class="fas fa-city text-2xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm text-gray-500">Şehirler</p>
+                                <p class="text-lg font-semibold"><%= cities.length %> şehir</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

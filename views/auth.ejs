@@ -152,9 +152,10 @@
             }
         }
 
-        // Sayfa yüklendiğinde giriş tabını aktif yap
+        // Sayfa yüklendiğinde gelen parametreye göre tab'ı ayarla
         document.addEventListener('DOMContentLoaded', () => {
-            switchTab('login');
+            const page = '<%= typeof page !== "undefined" ? page : "login" %>';
+            switchTab(page);
         });
     </script>
 </body>

@@ -44,57 +44,16 @@
 </head>
 <body class="bg-gray-100">
     <div class="flex min-h-screen">
-        <!-- Sol Menü - Sabit -->
-        <div class="fixed left-0 top-0 h-full w-64 bg-yellow-600 text-white p-6 overflow-y-auto">
-            <h1 class="text-2xl font-bold mb-8">Admin Paneli</h1>
-            <nav class="space-y-4">
-                <div>
-                    <a href="/admin/home" class="w-full text-left py-2 px-4 hover:bg-yellow-700 rounded block">
-                        <i class="fas fa-home mr-2"></i>
-                        <span>Ana Sayfa</span>
-                    </a>
-                </div>
-                <div>
-                    <a href="/admin/users" class="w-full text-left py-2 px-4 hover:bg-yellow-700 rounded block">
-                        <i class="fas fa-users mr-2"></i>
-                        <span>Kullanıcılar</span>
-                    </a>
-                </div>
-                <div>
-                    <a href="/admin/comments" class="w-full text-left py-2 px-4 hover:bg-yellow-700 rounded block">
-                        <i class="fas fa-comments mr-2"></i>
-                        <span>Yorumlar</span>
-                    </a>
-                </div>
-                <div>
-                    <a href="/admin/countries" class="w-full text-left py-2 px-4 hover:bg-yellow-700 rounded block">
-                        <i class="fas fa-globe mr-2"></i>
-                        <span>Ülkeler</span>
-                    </a>
-                </div>
-                <div>
-                    <a href="/admin/cities" class="w-full text-left py-2 px-4 hover:bg-yellow-700 rounded block">
-                        <i class="fas fa-city mr-2"></i>
-                        <span>Şehirler</span>
-                    </a>
-                </div>
-                <div class="absolute bottom-6 left-0 w-full px-6">
-                    <a href="/auth/logout" class="w-full flex items-center justify-center py-2 px-4 bg-red-500 hover:bg-red-600 rounded text-white transition-colors">
-                        <i class="fas fa-sign-out-alt mr-2"></i>
-                        Çıkış Yap
-                    </a>
-                </div>
-            </nav>
-        </div>
-
-        <!-- Ana İçerik - Sol menüyü dikkate alarak margin ekle -->
+        <%- include('../partials/admin/_navbar') %>
+        
+        <!-- Ana İçerik -->
         <div class="flex-1 ml-64 p-8">
             <div class="bg-white rounded-lg shadow-md p-6">
                 <h2 class="text-2xl font-semibold mb-6">Şehir Düzenle</h2>
-                <form action="/admin/edit-city/<%= city._id %>" method="POST" enctype="multipart/form-data" class="space-y-4">
+                <form action="/admin/update-city/<%= city._id %>" method="POST" enctype="multipart/form-data" class="space-y-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Şehir Adı</label>
-                        <input type="text" name="name" value="<%= city.name %>" required class="mt-1 block w-3/4 px-3 py-2 border border-gray-300 rounded-md">
+                        <input type="text" name="name" value="<%= city.name %>" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md">
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Slug</label>
@@ -102,9 +61,10 @@
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Ülke</label>
-                        <select name="countryId" required class="mt-1 block w-3/4 px-3 py-2 border border-gray-300 rounded-md">
+                        <select name="countryId" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md">
+                            <option value="">Ülke Seçin</option>
                             <% countries.forEach(country => { %>
-                                <option value="<%= country._id %>" <%= city.countryId && city.countryId.toString() === country._id.toString() ? 'selected' : '' %>>
+                                <option value="<%= country._id %>" <%= city.countryId && city.countryId._id.toString() === country._id.toString() ? 'selected' : '' %>>
                                     <%= country.name %>
                                 </option>
                             <% }) %>
@@ -112,7 +72,7 @@
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Açıklama</label>
-                        <textarea id="description" name="description" class="editor mt-1 block w-3/4 px-3 py-2 border border-gray-300 rounded-md"><%= city.description %></textarea>
+                        <textarea id="description" name="description" class="editor mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"><%= city.description %></textarea>
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Mevcut Fotoğraf</label>
@@ -127,7 +87,7 @@
                         <input type="file" name="image" accept="image/*" class="mt-1 block w-3/4">
                     </div>
                     <div class="flex justify-end space-x-4">
-                        <a href="/admin/cityList" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">
+                        <a href="/admin/cities" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">
                             İptal
                         </a>
                         <button type="submit" class="px-4 py-2 bg-yellow-600 text-white rounded-md hover:bg-yellow-700">

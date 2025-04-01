@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ülke Düzenle - Admin Paneli</title>
+    <link rel="icon" href="/images/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://cdn.tiny.cloud/1/96dma7ctwc5lu5m0n71vfinzblada8qzrv9lqdnw7r5gagu8/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+    <script>
+        tinymce.init({
+            selector: '#description',
+            plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
+            toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
+            height: 300,
+            language: 'tr',
+            images_upload_url: '/admin/upload-image',
+            images_upload_handler: function (blobInfo, success, failure) {
+                var xhr, formData;
+                xhr = new XMLHttpRequest();
+                xhr.withCredentials = false;
+                xhr.open('POST', '/admin/upload-image');
+                xhr.onload = function() {
+                    var json;
+                    if (xhr.status != 200) {
+                        failure('HTTP Error: ' + xhr.status);
+                        return;
+                    }
+                    json = JSON.parse(xhr.responseText);
+                    if (!json || typeof json.location != 'string') {
+                        failure('Invalid JSON: ' + xhr.responseText);
+                        return;
+                    }
+                    success(json.location);
+                };
+                formData = new FormData();
+                formData.append('file', blobInfo.blob(), blobInfo.filename());
+                xhr.send(formData);
+            }
+        });
+    </script>
+</head>
+<body class="bg-gray-100">
+    <div class="flex min-h-screen">
+        <%- include('../partials/admin/_navbar') %>
+        
+        <!-- Ana İçerik -->
+        <div class="flex-1 ml-64 p-8">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-2xl font-semibold mb-6">Ülke Düzenle</h2>
+                <form action="/admin/update-country/<%= country._id %>" method="POST" enctype="multipart/form-data" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Ülke Adı</label>
+                        <input type="text" name="name" value="<%= country.name %>" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Açıklama</label>
+                        <textarea name="description" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md h-32"><%= country.description %></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Mevcut Fotoğraf</label>
+                        <% if (country.imageUrl) { %>
+                            <img src="/images/<%= country.slug %>.jpg" alt="<%= country.name %>" class="mt-2 h-32 w-48 object-cover rounded">
+                        <% } %>
+                        <label class="block text-sm font-medium text-gray-700 mt-4">Yeni Fotoğraf Yükle</label>
+                        <input type="file" name="image" accept="image/*" class="mt-1 block w-full">
+                    </div>
+
+                    <div class="flex justify-end space-x-4">
+                        <a href="/admin/countries" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">İptal</a>
+                        <button type="submit" class="bg-yellow-600 text-white px-4 py-2 rounded hover:bg-yellow-700">Kaydet</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

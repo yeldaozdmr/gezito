@@ -1,0 +1,75 @@
+<%- include('../partials/admin/_header') %>
+<body class="bg-gray-100">
+    <div class="flex min-h-screen">
+        <%- include('../partials/admin/_navbar') %>
+        
+        <!-- Ana İçerik -->
+        <div class="flex-1 ml-64 p-8">
+            <!-- Ülke Ekleme Formu -->
+            <div id="addCountryForm" class="content-form hidden bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-2xl font-semibold mb-4">Ülke Ekle</h2>
+                <form action="/admin/countries/add" method="POST" enctype="multipart/form-data" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Ülke Adı</label>
+                        <input type="text" name="name" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Açıklama</label>
+                        <textarea name="description" class="editor mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Fotoğraf</label>
+                        <input type="file" name="image" accept="image/*" class="mt-1 block w-full">
+                    </div>
+                    <button type="submit" class="bg-yellow-600 text-white px-4 py-2 rounded hover:bg-yellow-700">Ekle</button>
+                </form>
+            </div>
+
+            <!-- Ülke Listesi -->
+            <div id="countryList" class="content-list">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-2xl font-semibold">Ülkeler</h2>
+                    <button onclick="toggleForm('addCountryForm')" class="bg-yellow-600 text-white px-4 py-2 rounded-full hover:bg-yellow-700">
+                        <i class="fas fa-plus"></i> Yeni Ülke
+                    </button>
+                </div>
+                <div class="bg-white rounded-lg shadow overflow-hidden">
+                    <table class="min-w-full">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fotoğraf</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ülke Adı</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            <% countries.forEach(country => { %>
+                                <tr>
+                                    <td class="px-6 py-4">
+                                        <% if (country.imageUrl) { %>
+                                            <img src="/images/<%= country.slug %>.jpg" alt="<%= country.name %>" class="h-24 w-32 object-cover rounded">
+                                        <% } else { %>
+                                            <div class="h-24 w-32 bg-gray-200 rounded flex items-center justify-center">
+                                                <span class="text-gray-500">Fotoğraf Yok</span>
+                                            </div>
+                                        <% } %>
+                                    </td>
+                                    <td class="px-6 py-4"><%= country.name %></td>
+                                    <td class="px-6 py-4">
+                                        <a href="/admin/edit-country/<%= country._id %>" class="text-indigo-600 hover:text-indigo-900 mr-4">
+                                            <i class="fas fa-edit"></i> Düzenle
+                                        </a>
+                                        <a href="/admin/delete-country/<%= country._id %>" class="text-red-600 hover:text-red-900" onclick="return confirm('Bu ülkeyi silmek istediğinize emin misiniz?')">
+                                            <i class="fas fa-trash"></i> Sil
+                                        </a>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

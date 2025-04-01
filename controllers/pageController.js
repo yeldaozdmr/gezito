@@ -2,21 +2,21 @@ const Country = require('../models/Country');
 const City = require('../models/City');
 const Comment = require('../models/Comment');
 const Dish = require('../models/Dish');
+const User = require('../models/User');
 
 // Anasayfa için veri getir
 async function getHomePage(req, res) {
     try {
-        const [cities, countries] = await Promise.all([
-            City.find().sort({ name: 1 }).limit(8),
-            Country.find().sort({ name: 1 }).limit(8)
-        ]);
-
-        cities.forEach(city => city.imageUrl = `/images/${city.slug}.jpg`);
-        countries.forEach(country => country.imageUrl = `/images/${country.slug}.jpg`);
-
-        res.render('index', { cities, countries });
+        const countries = await Country.find();
+        const cities = await City.find().populate('countryId');
+        res.render('index', { 
+            countries,
+            cities,
+            user: req.session.userId ? await User.findById(req.session.userId) : null
+        });
     } catch (error) {
-        res.status(500).send(error.message);
+        console.error('Ana sayfa hatası:', error);
+        res.status(500).send('Bir hata oluştu');
     }
 }
 
@@ -27,7 +27,18 @@ function getContactPage(req, res) {
 
 // Giriş sayfasını render et
 function getLoginPage(req, res) {
-    res.render('auth');
+    if (req.session.userId) {
+        return res.redirect('/');
+    }
+    res.render('auth', { page: 'login' });
+}
+
+// Kayıt sayfası
+function getRegisterPage(req, res) {
+    if (req.session.userId) {
+        return res.redirect('/');
+    }
+    res.render('auth', { page: 'register' });
 }
 
 // Ülke detaylarını göster
@@ -48,7 +59,7 @@ async function getCountryDetails(req, res) {
 // Şehir detaylarını göster
 async function cityDetail(req, res) {
     try {
-        const city = await City.findOne({ slug: req.params.slug });
+        const city = await City.findOne({ slug: req.params.slug }).populate('countryId');
         if (!city) return res.status(404).send('Şehir bulunamadı.');
 
         city.imageUrl = `/images/${city.slug}.jpg`;
@@ -130,7 +141,42 @@ async function getDishes(req, res) {
     }
 }
 
-module.exports = {
+// Ülke detay sayfası
+async function getCountryPage(req, res) {
+    try {
+        const country = await Country.findOne({ slug: req.params.slug });
+        if (!country) {
+            return res.status(404).send('Ülke bulunamadı');
+        }
+
+        const cities = await City.find({ countryId: country._id });
+        res.render('country', { 
+            country,
+            cities,
+            user: req.session.userId ? await User.findById(req.session.userId) : null
+        });
+    } catch (error) {
+        console.error('Ülke sayfası hatası:', error);
+        res.status(500).send('Bir hata oluştu');
+    }
+}
+
+// Profil sayfası
+async function getProfilePage(req, res) {
+    try {
+        const user = await User.findById(req.session.userId);
+        if (!user) {
+            return res.redirect('/giris');
+        }
+
+        res.render('profile', { user });
+    } catch (error) {
+        console.error('Profil sayfası hatası:', error);
+        res.status(500).send('Bir hata oluştu');
+    }
+}
+
+const pageController = {
     cityDetail,
     getComments,
     getContactPage,
@@ -139,5 +185,10 @@ module.exports = {
     getCitiesList,
     getDishes,
     getHomePage,
-    getLoginPage
+    getLoginPage,
+    getRegisterPage,
+    getCountryPage,
+    getProfilePage
 };
+
+module.exports = pageController;
