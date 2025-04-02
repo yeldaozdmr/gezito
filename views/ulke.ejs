@@ -18,9 +18,23 @@
                 <h1 class="text-3xl font-bold text-gray-900"><%= country.name %></h1>
                 <p class="text-gray-600 mt-2"><%- country.description %></p>
                 
-                <!-- Öne Çıkan Yerler -->
-              
-                
+                <!-- Şehirler Listesi -->
+                <div class="mt-8">
+                    <h2 class="text-2xl font-semibold mb-4">Şehirler</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <% cities.slice(0, 6).forEach(city => { %>
+                            <a href="/sehir/<%= city.slug %>" class="block bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
+                                <img src="/images/<%= city.slug %>.jpg" alt="<%= city.name %>" class="w-full h-32 object-cover">
+                                <div class="p-3">
+                                    <h3 class="text-lg font-semibold text-gray-900"><%= city.name %></h3>
+                                </div>
+                            </a>
+                        <% }) %>
+                    </div>
+                    <% if (cities.length > 6) { %>
+                        <a href="/sehirler" class="mt-4 inline-block bg-blue-600 text-white rounded p-2">Daha Fazla Şehir Göster</a>
+                    <% } %>
+                </div>
 
                 <!-- Yorum Yapma Bölümü -->
                 <div class="mt-8">

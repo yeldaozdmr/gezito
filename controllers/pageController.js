@@ -7,7 +7,8 @@ const User = require('../models/User');
 // Anasayfa için veri getir
 async function getHomePage(req, res) {
     try {
-        const countries = await Country.find();
+        // Ülkeleri A'dan Z'ye sıralı olarak al
+        const countries = await Country.find().sort({ name: 1 });  // A-Z sıralaması
         const cities = await City.find().populate('countryId');
         res.render('index', { 
             countries,
@@ -47,10 +48,18 @@ async function getCountryDetails(req, res) {
         const country = await Country.findOne({ slug: req.params.slug });
         if (!country) return res.status(404).send('Ülke bulunamadı.');
 
+        // Ülkeye ait şehirleri getir
+        const cities = await City.find({ countryId: country._id }).sort({ name: 1 });
+        
         country.imageUrl = `/images/${country.slug}.jpg`;
         const comments = await Comment.find({ countryId: country._id }).populate('userId', 'username');
 
-        res.render('ulke', { country, comments });
+        res.render('ulke', { 
+            country, 
+            cities,
+            comments,
+            user: req.session.userId ? await User.findById(req.session.userId) : null
+        });
     } catch (error) {
         res.status(500).send('Bir hata oluştu.');
     }
@@ -108,6 +117,7 @@ async function getCitiesList(req, res) {
 // Tüm ülkeleri listele
 async function getCountriesList(req, res) {
     try {
+        // Ülkeleri A-Z sıralayarak al
         const countries = await Country.find().sort({ name: 1 });
         countries.forEach(country => country.imageUrl = `/images/${country.slug}.jpg`);
 
