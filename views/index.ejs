@@ -85,8 +85,23 @@
     <section class="py-16 bg-white">
         <div class="container mx-auto px-4">
             <h2 class="text-3xl font-bold text-gray-900 mb-8">Popüler Şehirler</h2>
+            <!-- İlk Satır -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                <% cities.slice(0, 4).forEach(city => { %>
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer transform transition duration-300 hover:scale-105" onclick="window.location.href='/sehir/<%= city.slug %>'">
+                        <div class="relative h-48">
+                            <img src="/images/<%= city.slug %>.jpg" alt="<%= city.name %>" class="w-full h-full object-cover rounded-t-lg">
+                            <div class="absolute inset-0 bg-black bg-opacity-20 transition duration-300 hover:bg-opacity-10"></div>
+                        </div>
+                        <div class="p-4">
+                            <h3 class="text-xl font-semibold text-gray-900"><%= city.name %></h3>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+            <!-- İkinci Satır -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <% cities.slice(0, 8).forEach(city => { %>
+                <% cities.slice(4, 8).forEach(city => { %>
                     <div class="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer transform transition duration-300 hover:scale-105" onclick="window.location.href='/sehir/<%= city.slug %>'">
                         <div class="relative h-48">
                             <img src="/images/<%= city.slug %>.jpg" alt="<%= city.name %>" class="w-full h-full object-cover rounded-t-lg">
@@ -105,8 +120,23 @@
     <section class="py-16 bg-gray-50">
         <div class="container mx-auto px-4">
             <h2 class="text-3xl font-bold text-gray-900 mb-8">Popüler Ülkeler</h2>
+            <!-- İlk Satır -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                <% countries.slice(0, 4).forEach(country => { %>
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer transform transition duration-300 hover:scale-105" onclick="window.location.href='/ulke/<%= country.slug %>'">
+                        <div class="relative h-48">
+                            <img src="/images/<%= country.slug %>.jpg" alt="<%= country.name %>" class="w-full h-full object-cover rounded-t-lg">
+                            <div class="absolute inset-0 bg-black bg-opacity-20 transition duration-300 hover:bg-opacity-10"></div>
+                        </div>
+                        <div class="p-4">
+                            <h3 class="text-xl font-semibold text-gray-900"><%= country.name %></h3>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+            <!-- İkinci Satır -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <% countries.slice(0, 8).forEach(country => { %>
+                <% countries.slice(4, 8).forEach(country => { %>
                     <div class="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer transform transition duration-300 hover:scale-105" onclick="window.location.href='/ulke/<%= country.slug %>'">
                         <div class="relative h-48">
                             <img src="/images/<%= country.slug %>.jpg" alt="<%= country.name %>" class="w-full h-full object-cover rounded-t-lg">
