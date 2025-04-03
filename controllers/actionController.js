@@ -1,6 +1,19 @@
 const User = require('../models/User');
 const Comment = require('../models/Comment');
 const City = require('../models/City');
+const crypto = require('crypto');
+
+// Nodemailer için gerekli yapılandırmalar
+const nodemailer = require('nodemailer');
+
+// E-posta göndermek için transporter oluşturma
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: 'yeldaozdmrr3434@gmail.com',  // E-posta adresiniz
+        pass: 'jkmw fzda cgjn jepz'  // E-posta şifreniz veya uygulama şifreniz
+    }
+});
 
 async function register(req, res) {
     const { username, email, password } = req.body;
@@ -73,6 +86,149 @@ function logout(req, res) {
     res.redirect('/'); // Anasayfaya yönlendir
 }
 
+// Şifremi unuttum sayfasını göster
+async function getForgotPasswordPage(req, res) {
+    res.render('forgot-password', { error: null, success: null });
+}
+
+// Şifre sıfırlama e-postası gönder
+async function forgotPassword(req, res) {
+    const { email } = req.body;
+    
+    try {
+        const user = await User.findOne({ email });
+        
+        if (!user) {
+            return res.render('forgot-password', { 
+                error: 'Bu e-posta adresine sahip bir kullanıcı bulunamadı.', 
+                success: null 
+            });
+        }
+        
+        // Rastgele token oluştur
+        const resetToken = crypto.randomBytes(20).toString('hex');
+        const resetTokenExpiry = Date.now() + 3600000; // 1 saat geçerli
+        
+        // Kullanıcı bilgilerini güncelle
+        user.resetToken = resetToken;
+        user.resetTokenExpiry = resetTokenExpiry;
+        await user.save();
+        
+        // E-posta içeriği
+        const mailOptions = {
+            from: 'yeldaozdmrr3434@gmail.com',
+            to: user.email,
+            subject: 'Gezito - Şifre Sıfırlama',
+            html: `
+                <h1>Gezito.com - Şifre Sıfırlama</h1>
+                <p>Şifrenizi sıfırlamak için aşağıdaki bağlantıya tıklayın:</p>
+                <a href="http://gezito.com/sifremi-sifirla/${resetToken}">Şifremi Sıfırla</a>
+                <p>Bu bağlantı 1 saat boyunca geçerlidir.</p>
+                <p>Eğer şifre sıfırlama talebinde bulunmadıysanız, bu e-postayı dikkate almayınız.</p>
+            `
+        };
+        
+        // E-postayı gönder
+        await transporter.sendMail(mailOptions);
+        
+        return res.render('forgot-password', { 
+            error: null, 
+            success: 'Şifre sıfırlama bağlantısı e-posta adresinize gönderildi.' 
+        });
+        
+    } catch (err) {
+        console.error('Şifre sıfırlama hatası:', err);
+        return res.render('forgot-password', { 
+            error: 'Şifre sıfırlama işlemi sırasında bir hata oluştu.', 
+            success: null 
+        });
+    }
+}
+
+// Şifre sıfırlama sayfasını göster
+async function getResetPasswordPage(req, res) {
+    const { token } = req.params;
+    
+    try {
+        const user = await User.findOne({ 
+            resetToken: token,
+            resetTokenExpiry: { $gt: Date.now() }
+        });
+        
+        if (!user) {
+            return res.render('reset-password', { 
+                error: 'Geçersiz veya süresi dolmuş token.', 
+                success: null,
+                token: null
+            });
+        }
+        
+        res.render('reset-password', { 
+            error: null, 
+            success: null,
+            token
+        });
+        
+    } catch (err) {
+        console.error('Şifre sıfırlama sayfası hatası:', err);
+        res.render('reset-password', { 
+            error: 'Bir hata oluştu.', 
+            success: null,
+            token: null
+        });
+    }
+}
+
+// Şifreyi sıfırla
+async function resetPassword(req, res) {
+    const { token } = req.params;
+    const { password, confirmPassword } = req.body;
+    
+    // Şifre doğrulama
+    if (password !== confirmPassword) {
+        return res.render('reset-password', { 
+            error: 'Şifreler eşleşmiyor.', 
+            success: null,
+            token
+        });
+    }
+    
+    try {
+        const user = await User.findOne({ 
+            resetToken: token,
+            resetTokenExpiry: { $gt: Date.now() }
+        });
+        
+        if (!user) {
+            return res.render('reset-password', { 
+                error: 'Geçersiz veya süresi dolmuş token.', 
+                success: null,
+                token: null
+            });
+        }
+        
+        // Şifreyi güncelle ve token bilgilerini temizle
+        user.password = password;
+        user.resetToken = null;
+        user.resetTokenExpiry = null;
+        await user.save();
+        
+        return res.render('reset-password', { 
+            error: null, 
+            success: 'Şifreniz başarıyla sıfırlandı. Giriş yapabilirsiniz.',
+            token: null
+        });
+        
+    } catch (err) {
+        console.error('Şifre sıfırlama hatası:', err);
+        return res.render('reset-password', { 
+            error: 'Şifre sıfırlama işlemi sırasında bir hata oluştu.', 
+            success: null,
+            token
+        });
+    }
+}
+
 // İletişim formu gönderimi
 async function iletisim(req, res) {
     const { name, email, message } = req.body;
@@ -130,5 +286,9 @@ module.exports = {
     login,
     logout,
     iletisim,
-    addComment
+    addComment,
+    getForgotPasswordPage,
+    forgotPassword,
+    getResetPasswordPage,
+    resetPassword
 };

@@ -151,22 +151,37 @@ async function getDishes(req, res) {
     }
 }
 
-// Ülke detay sayfası
-async function getCountryPage(req, res) {
-    try {
-        const country = await Country.findOne({ slug: req.params.slug });
-        if (!country) {
-            return res.status(404).send('Ülke bulunamadı');
-        }
+// Anasayfa için veri getir (getHomePage fonksiyonuyla aynı işlevi görür)
+async function getIndex(req, res) {
+    return getHomePage(req, res);
+}
 
-        const cities = await City.find({ countryId: country._id });
-        res.render('country', { 
-            country,
-            cities,
-            user: req.session.userId ? await User.findById(req.session.userId) : null
-        });
+// Ülke detay sayfası (getCountryDetails fonksiyonuyla aynı işlevi görür)
+async function getCountryPage(req, res) {
+    return getCountryDetails(req, res);
+}
+
+// Şehir detay sayfası (cityDetail fonksiyonuyla aynı işlevi görür)
+async function getCityPage(req, res) {
+    return cityDetail(req, res);
+}
+
+// Tüm şehirleri listele (getCitiesList fonksiyonuyla aynı işlevi görür)
+async function getCitiesPage(req, res) {
+    return getCitiesList(req, res);
+}
+
+// Tüm ülkeleri listele (getCountriesList fonksiyonuyla aynı işlevi görür)
+async function getCountriesPage(req, res) {
+    return getCountriesList(req, res);
+}
+
+// Hakkımızda sayfası
+async function getAboutPage(req, res) {
+    try {
+        res.render('about');
     } catch (error) {
-        console.error('Ülke sayfası hatası:', error);
+        console.error('Hakkımızda sayfası hatası:', error);
         res.status(500).send('Bir hata oluştu');
     }
 }
@@ -198,7 +213,13 @@ const pageController = {
     getLoginPage,
     getRegisterPage,
     getCountryPage,
-    getProfilePage
+    getProfilePage,
+    // Eksik fonksiyonlar eklendi
+    getIndex,
+    getCityPage,
+    getCitiesPage,
+    getCountriesPage,
+    getAboutPage
 };
 
 module.exports = pageController;

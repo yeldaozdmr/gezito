@@ -7,20 +7,20 @@ const { ensureAuth } = require('../middlewares/authMiddleware');
 
 
 // 🌍 Ana Sayfa
-router.get('/', pageController.getHomePage);
+router.get('/', pageController.getIndex);
 
 // 🇹🇷 Ülke Sayfası
-router.get('/ulke/:slug', pageController.getCountryDetails);
+router.get('/ulke/:slug', pageController.getCountryPage);
 
 // 🏙️ Şehir Detay Sayfası
-router.get('/sehir/:slug', pageController.cityDetail);
+router.get('/sehir/:slug', pageController.getCityPage);
 
 // ✉️ İletişim Sayfası
 router.get('/iletisim', pageController.getContactPage);
 
 // 🌍 Ülke & Şehir Listeleme (Gezinme Sayfası)
-router.get('/ulkeler', pageController.getCountriesList);
-router.get('/sehirler', pageController.getCitiesList);
+router.get('/ulkeler', pageController.getCountriesPage);
+router.get('/sehirler', pageController.getCitiesPage);
 
 // 🔑 Giriş/Kayıt Sayfası
 router.get('/giris', pageController.getLoginPage);
@@ -38,7 +38,7 @@ router.post('/auth/login', actionController.login);
 router.get('/auth/logout', actionController.logout);
 
 // İletişim formu gönderimi
-router.post('/contact', actionController.iletisim);
+router.post('/iletisim', actionController.iletisim);
 
 // Yorum gönderimi
 router.post('/comments', actionController.addComment);
@@ -51,6 +51,20 @@ router.get('/dishes', pageController.getDishes);
 
 // Profil sayfası (giriş yapmış kullanıcılar için)
 router.get('/profil', ensureAuth, pageController.getProfilePage);
+
+// Hakkımızda sayfası
+router.get('/hakkimizda', pageController.getAboutPage);
+
+// Şifremi unuttum
+router.get('/sifremi-unuttum', actionController.getForgotPasswordPage);
+router.post('/auth/forgot-password', actionController.forgotPassword);
+router.get('/sifremi-sifirla/:token', actionController.getResetPasswordPage);
+router.post('/auth/reset-password/:token', actionController.resetPassword);
+
+// Kullanım şartları
+router.get('/kullanim-sartlari', (req, res) => {
+    res.render('terms');
+});
 
 module.exports = router;
 

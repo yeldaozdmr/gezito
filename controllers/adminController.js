@@ -9,7 +9,7 @@ const fs = require('fs');
 // Multer configuration
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        const uploadDir = 'public/uploads';
+        const uploadDir = 'public/uploads/temp';
         if (!fs.existsSync(uploadDir)) {
             fs.mkdirSync(uploadDir, { recursive: true });
         }
@@ -41,7 +41,43 @@ class AdminController {
         return upload;
     }
 
-    // Giriş sayfasını render et
+    // Admin panel ana sayfasını render et
+    static async renderDashboard(req, res) {
+        try {
+            // İstatistik verileri
+            const [userCount, countryCount, cityCount, commentCount] = await Promise.all([
+                User.countDocuments(),
+                Country.countDocuments(),
+                City.countDocuments(),
+                Comment.countDocuments()
+            ]);
+
+            // Son eklenen kullanıcılar
+            const recentUsers = await User.find().sort({ createdAt: -1 }).limit(5);
+            
+            // Son yorumlar
+            const recentComments = await Comment.find()
+                .populate('userId', 'username')
+                .sort({ createdAt: -1 })
+                .limit(5);
+
+            res.render('admin/dashboard', {
+                stats: {
+                    userCount,
+                    countryCount,
+                    cityCount,
+                    commentCount
+                },
+                recentUsers,
+                recentComments
+            });
+        } catch (error) {
+            console.error('Dashboard render hatası:', error);
+            res.status(500).send('Dashboard yüklenirken bir hata oluştu');
+        }
+    }
+
+    // Admin girişi
     static async renderLogin(req, res) {
         res.render('auth'); // auth.ejs dosyasını render et
     }
@@ -79,107 +115,92 @@ class AdminController {
         }
     }
 
-    // Admin Dashboard
-    static async renderDashboard(req, res) {
-        try {
-            const countries = await Country.find().sort({ name: 1 });
-            const cities = await City.find().populate('countryId').sort({ name: 1 });
-            const users = await User.find().sort({ createdAt: -1 });
-            const comments = await Comment.find().populate('userId', 'username').sort({ createdAt: -1 });
-
-            res.render('admin/dashboard', { 
-                page: 'dashboard',
-                countries, 
-                cities, 
-                users: users || [], 
-                comments: comments || []
-            });
-        } catch (error) {
-            console.error('Dashboard hatası:', error);
-            res.status(500).send('Bir hata oluştu');
-        }
-    }
-
-    // Users Page
+    // Kullanıcıları listele
     static async renderUsers(req, res) {
         try {
             const users = await User.find().sort({ createdAt: -1 });
-            res.render('admin/users', { 
-                page: 'users',
-                users: users || []
-            });
+            res.render('admin/users', { users });
         } catch (error) {
-            console.error('Kullanıcılar sayfası hatası:', error);
-            res.status(500).send('Bir hata oluştu');
+            console.error('Kullanıcı listesi hatası:', error);
+            res.status(500).send('Kullanıcılar listelenirken bir hata oluştu');
         }
     }
 
-    // Comments Page
+    // Kullanıcıyı sil
+    static async deleteUser(req, res) {
+        try {
+            await User.findByIdAndDelete(req.params.id);
+            res.redirect('/admin/users');
+        } catch (error) {
+            console.error('Kullanıcı silme hatası:', error);
+            res.status(500).send('Kullanıcı silinirken bir hata oluştu');
+        }
+    }
+
+    // Yorumları listele
     static async renderComments(req, res) {
         try {
-            const comments = await Comment.find().populate('userId', 'username').sort({ createdAt: -1 });
-            res.render('admin/comments', { 
-                page: 'comments',
-                comments: comments || []
-            });
+            const comments = await Comment.find()
+                .populate('userId', 'username')
+                .populate('cityId', 'name')
+                .populate('countryId', 'name')
+                .sort({ createdAt: -1 });
+            res.render('admin/comments', { comments });
         } catch (error) {
-            console.error('Yorumlar sayfası hatası:', error);
-            res.status(500).send('Bir hata oluştu');
+            console.error('Yorum listesi hatası:', error);
+            res.status(500).send('Yorumlar listelenirken bir hata oluştu');
         }
     }
 
-    // Countries Page
+    // Yorumu sil
+    static async deleteComment(req, res) {
+        try {
+            await Comment.findByIdAndDelete(req.params.id);
+            res.redirect('/admin/comments');
+        } catch (error) {
+            console.error('Yorum silme hatası:', error);
+            res.status(500).send('Yorum silinirken bir hata oluştu');
+        }
+    }
+
+    // Ülkeleri listele
     static async renderCountries(req, res) {
         try {
             const countries = await Country.find().sort({ name: 1 });
-            res.render('admin/countries', { 
-                page: 'countries',
-                countries
-            });
+            res.render('admin/countries', { countries });
         } catch (error) {
-            console.error('Ülkeler sayfası hatası:', error);
-            res.status(500).send('Bir hata oluştu');
+            console.error('Ülke listesi hatası:', error);
+            res.status(500).send('Ülkeler listelenirken bir hata oluştu');
         }
     }
 
-    // Cities Page
-    static async renderCities(req, res) {
-        try {
-            const cities = await City.find().populate('countryId').sort({ name: 1 });
-            const countries = await Country.find().sort({ name: 1 });
-            res.render('admin/cities', { 
-                page: 'cities',
-                cities,
-                countries
-            });
-        } catch (error) {
-            console.error('Şehirler sayfası hatası:', error);
-            res.status(500).send('Bir hata oluştu');
-        }
+    // Ülke ekleme sayfası
+    static async renderAddCountry(req, res) {
+        res.render('admin/add-country');
     }
 
-    // Countries Section
+    // Ülke düzenleme sayfası
     static async renderEditCountry(req, res) {
         try {
             const country = await Country.findById(req.params.id);
-            res.render('admin/edit-country', { 
-                country,
-                isAuthenticated: req.session.isAuthenticated,
-                isAdmin: req.session.isAdmin 
-            });
+            if (!country) {
+                return res.status(404).send('Ülke bulunamadı');
+            }
+            res.render('admin/edit-country', { country });
         } catch (error) {
-            console.error(error);
-            res.status(500).send('Sunucu hatası');
+            console.error('Ülke düzenleme sayfası hatası:', error);
+            res.status(500).send('Ülke düzenleme sayfası yüklenirken bir hata oluştu');
         }
     }
 
+    // Yeni ülke ekle
     static async addCountry(req, res) {
         try {
             const { name, description } = req.body;
             const country = new Country({ 
                 name, 
                 description,
-                imageUrl: req.file ? `/uploads/${req.file.filename}` : null
+                imageUrl: req.file ? `/images/${req.file.filename}` : null
             });
             await country.save();
             res.redirect('/admin/countries');
@@ -189,6 +210,7 @@ class AdminController {
         }
     }
 
+    // Ülke güncelle
     static async updateCountry(req, res) {
         try {
             const { name, description, slug } = req.body;
@@ -199,7 +221,7 @@ class AdminController {
             }
             
             if (req.file) {
-                updateData.imageUrl = `/uploads/${req.file.filename}`;
+                updateData.imageUrl = `/images/${req.file.filename}`;
                 const country = await Country.findById(req.params.id);
                 if (country && country.imageUrl) {
                     const oldImagePath = path.join(__dirname, '../public', country.imageUrl);
@@ -217,6 +239,7 @@ class AdminController {
         }
     }
 
+    // Ülke sil
     static async deleteCountry(req, res) {
         try {
             const country = await Country.findById(req.params.id);
@@ -226,31 +249,45 @@ class AdminController {
                     fs.unlinkSync(imagePath);
                 }
             }
+            
             await Country.findByIdAndDelete(req.params.id);
+            // Bu ülkeye ait şehirleri de sil
             await City.deleteMany({ countryId: req.params.id });
             res.redirect('/admin/countries');
         } catch (error) {
+            console.error('Ülke silme hatası:', error);
             res.status(500).send('Ülke silinirken bir hata oluştu');
         }
     }
 
-    // Cities Section
-    static async renderEditCity(req, res) {
+    // Şehirleri listele
+    static async renderCities(req, res) {
         try {
-            const city = await City.findById(req.params.id).populate('countryId');
-            const countries = await Country.find();
-            res.render('admin/edit-city', { 
-                city,
-                countries,
-                isAuthenticated: req.session.isAuthenticated,
-                isAdmin: req.session.isAdmin 
-            });
+            const cities = await City.find().populate('countryId', 'name').sort({ name: 1 });
+            const countries = await Country.find().sort({ name: 1 });
+            res.render('admin/cities', { cities, countries });
         } catch (error) {
-            console.error(error);
-            res.status(500).send('Sunucu hatası');
+            console.error('Şehir listesi hatası:', error);
+            res.status(500).send('Şehirler listelenirken bir hata oluştu');
         }
     }
 
+    // Şehir düzenleme sayfası
+    static async renderEditCity(req, res) {
+        try {
+            const city = await City.findById(req.params.id);
+            if (!city) {
+                return res.status(404).send('Şehir bulunamadı');
+            }
+            const countries = await Country.find().sort({ name: 1 });
+            res.render('admin/edit-city', { city, countries });
+        } catch (error) {
+            console.error('Şehir düzenleme sayfası hatası:', error);
+            res.status(500).send('Şehir düzenleme sayfası yüklenirken bir hata oluştu');
+        }
+    }
+
+    // Yeni şehir ekle
     static async addCity(req, res) {
         try {
             const { name, countryId, description } = req.body;
@@ -258,7 +295,7 @@ class AdminController {
                 name, 
                 countryId, 
                 description,
-                imageUrl: req.file ? `/uploads/${req.file.filename}` : null
+                imageUrl: req.file ? `/images/${req.file.filename}` : null
             });
             await city.save();
             res.redirect('/admin/cities');
@@ -268,6 +305,7 @@ class AdminController {
         }
     }
 
+    // Şehir güncelle
     static async updateCity(req, res) {
         try {
             const { name, countryId, description, slug } = req.body;
@@ -278,7 +316,7 @@ class AdminController {
             }
             
             if (req.file) {
-                updateData.imageUrl = `/uploads/${req.file.filename}`;
+                updateData.imageUrl = `/images/${req.file.filename}`;
                 const city = await City.findById(req.params.id);
                 if (city && city.imageUrl) {
                     const oldImagePath = path.join(__dirname, '../public', city.imageUrl);
@@ -296,6 +334,7 @@ class AdminController {
         }
     }
 
+    // Şehir sil
     static async deleteCity(req, res) {
         try {
             const city = await City.findById(req.params.id);
@@ -305,30 +344,15 @@ class AdminController {
                     fs.unlinkSync(imagePath);
                 }
             }
+            
             await City.findByIdAndDelete(req.params.id);
             res.redirect('/admin/cities');
         } catch (error) {
+            console.error('Şehir silme hatası:', error);
             res.status(500).send('Şehir silinirken bir hata oluştu');
-        }
-    }
-
-    static async deleteUser(req, res) {
-        try {
-            await User.findByIdAndDelete(req.params.id);
-            res.redirect('/admin/users');
-        } catch (error) {
-            res.status(500).send('Kullanıcı silinirken bir hata oluştu');
-        }
-    }
-
-    static async deleteComment(req, res) {
-        try {
-            await Comment.findByIdAndDelete(req.params.id);
-            res.redirect('/admin/comments');
-        } catch (error) {
-            res.status(500).send('Yorum silinirken bir hata oluştu');
         }
     }
 }
 
 module.exports = AdminController;
+

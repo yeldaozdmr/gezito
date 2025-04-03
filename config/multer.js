@@ -1,11 +1,12 @@
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const sharp = require('sharp');
 
-// Multer storage configuration
+// Geçici depolama için diskStorage
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        const uploadDir = 'public/images';
+        const uploadDir = 'public/uploads/temp';
         // Eğer klasör yoksa oluştur
         if (!fs.existsSync(uploadDir)) {
             fs.mkdirSync(uploadDir, { recursive: true });
@@ -51,8 +52,57 @@ const upload = multer({
     storage: storage,
     fileFilter: fileFilter,
     limits: {
-        fileSize: 5 * 1024 * 1024 // 5MB limit
+        fileSize: 10 * 1024 * 1024 // 10MB limit
     }
 });
 
-module.exports = upload; 
+// Resim sıkıştırma fonksiyonu
+const compressImage = async (req, res, next) => {
+    if (!req.file) return next();
+
+    try {
+        // Yüklenmiş dosyanın yolu
+        const tempPath = req.file.path;
+        
+        // Optimize edilmiş dosyanın hedef yolu
+        const targetDir = 'public/images';
+        if (!fs.existsSync(targetDir)) {
+            fs.mkdirSync(targetDir, { recursive: true });
+        }
+
+        // Dosya adını al
+        const filename = req.file.filename;
+        const targetPath = path.join(targetDir, filename);
+        
+        // Dosyanın uzantısını kontrol et
+        const ext = path.extname(filename).toLowerCase();
+        
+        // Sharp ile görselleştirme işlemi
+        if (ext === '.gif') {
+            // GIF dosyaları için basit kopyalama (Sharp GIF'leri iyi işleyemez)
+            fs.copyFileSync(tempPath, targetPath);
+        } else {
+            // JPEG, PNG ve diğerleri için Sharp kullan
+            await sharp(tempPath)
+                .resize(1200, 800, { // Maksimum genişlik ve yükseklik
+                    fit: sharp.fit.inside,
+                    withoutEnlargement: true
+                })
+                .jpeg({ quality: 80 }) // JPEG kalitesi (80% iyi bir denge)
+                .toFile(targetPath);
+        }
+        
+        // Geçici dosyayı sil
+        fs.unlinkSync(tempPath);
+        
+        // Dosya yolunu güncelle
+        req.file.path = targetPath;
+        
+        next();
+    } catch (error) {
+        console.error('Resim sıkıştırma hatası:', error);
+        next(error);
+    }
+};
+
+module.exports = { upload, compressImage }; 
